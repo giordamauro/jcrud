@@ -8,7 +8,7 @@ import com.jcrud.model.RestHandler;
 
 public class StubRestHandlerFactory implements RestHandlerFactory {
 
-	private static final Map<Class<?>, StubRestHandler<?>> restHandlers = new HashMap<Class<?>, StubRestHandler<?>>();
+	private static final Map<Class<?>, RestHandler<?>> restHandlers = new HashMap<Class<?>, RestHandler<?>>();
 
 	@Override
 	public <T> RestHandler<T> newRestHandler(Class<T> resourceClass) {

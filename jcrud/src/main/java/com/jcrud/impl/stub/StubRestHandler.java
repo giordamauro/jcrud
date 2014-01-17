@@ -1,6 +1,7 @@
 package com.jcrud.impl.stub;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,9 @@ import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
 
 public class StubRestHandler<T> implements RestHandler<T> {
+
+	private static final int DEFAULT_ELEMENTS_COUNT = 20;
+	private static final int DEFAULT_PAGE_NUMBER = 0;
 
 	private final Map<String, T> resources = new HashMap<String, T>();
 
@@ -61,7 +65,27 @@ public class StubRestHandler<T> implements RestHandler<T> {
 	public List<T> handleGET(int elementsCount, int pageNumber) {
 		List<T> values = new ArrayList<T>(resources.values());
 
-		return values;
-	}
+		if (elementsCount == -1) {
+			elementsCount = DEFAULT_ELEMENTS_COUNT;
+		}
 
+		if (pageNumber == -1) {
+			pageNumber = DEFAULT_PAGE_NUMBER;
+		}
+
+		int fromIndex = pageNumber * elementsCount;
+		int toIndex = fromIndex + elementsCount;
+
+		if (toIndex > values.size()) {
+			toIndex = values.size();
+		}
+
+		List<T> elements = null;
+		if (fromIndex < toIndex) {
+			elements = values.subList(fromIndex, toIndex);
+		} else {
+			elements = Collections.emptyList();
+		}
+		return elements;
+	}
 }

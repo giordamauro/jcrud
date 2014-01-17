@@ -28,6 +28,11 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 	}
 
 	@Override
+	public void registerResource(String path, Class<?> resourceClass) {
+		pathAssignments.put(path, resourceClass);
+	}
+
+	@Override
 	public HttpResponse handleRequest(HttpRequest request) {
 
 		HttpResponse response = null;
@@ -69,9 +74,8 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			response = httpTypeAdapter.toHttpResponse(responseObject);
 		} else if (method == HttpMethod.GET) {
 
-			// TODO: obtener de los queryParams de la request
-			int elementsCount = 50;
-			int pageNumber = 0;
+			int elementsCount = getIntegerQueryParam(request, "elementsCount");
+			int pageNumber = getIntegerQueryParam(request, "pageNumber");
 
 			List<T> elements = restHandler.handleGET(elementsCount, pageNumber);
 			response = httpTypeAdapter.toHttpResponse(elements);
@@ -116,5 +120,18 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		}
 
 		return response;
+	}
+
+	private int getIntegerQueryParam(HttpRequest request, String queryName) {
+
+		int intValue = -1;
+
+		List<String> queryParam = request.getQueryParam(queryName);
+		if (queryParam != null && queryParam.size() == 1) {
+			String paramValue = queryParam.get(0);
+			return Integer.valueOf(paramValue);
+		}
+
+		return intValue;
 	}
 }
