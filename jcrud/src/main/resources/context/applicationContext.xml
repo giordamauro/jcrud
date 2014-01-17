@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+						http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+						http://www.springframework.org/schema/context
+						http://www.springframework.org/schema/context/spring-context-3.2.xsd
+						http://www.springframework.org/schema/util 
+						http://www.springframework.org/schema/util/spring-util-3.2.xsd
+						http://www.springframework.org/schema/tx
+						http://www.springframework.org/schema/tx/spring-tx.xsd
+						http://www.springframework.org/schema/jee 
+						http://www.springframework.org/schema/jee/spring-jee-3.2.xsd
+						http://www.springframework.org/schema/aop
+						http://www.springframework.org/schema/aop/spring-aop-3.2.xsd">
+
+	<context:annotation-config />
+
+	<context:property-placeholder location="classpath:/context/application.properties" />
+		
+	<bean id="gson" class="com.jcrud.utils.json.GsonFactoryBean">
+		<constructor-arg>
+			<bean class="com.google.gson.GsonBuilder"/>
+		</constructor-arg>
+	</bean>
+
+	<bean id="jsonTypeAdapter" class="com.jcrud.impl.JsonTypeAdapter">
+		<constructor-arg type="com.google.gson.Gson" ref="gson"/>
+	</bean>
+
+	<bean id="restHandlerFactory" class="com.jcrud.impl.stub.StubRestHandlerFactory"/>
+
+	<bean id="crudDispatcher" class="com.jcrud.impl.CRUDDispatcherImpl">
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="/persons" value-type="java.lang.Class" value="com.jcrud.impl.stub.Person"/>
+			</util:map>
+		</constructor-arg>
+	</bean>
+
+	<bean id="crudServletAdapter" class="com.jcrud.servlet.impl.CRUDServletAdapterImpl"/>
+
+</beans>
