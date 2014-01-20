@@ -20,6 +20,9 @@
 
 	<context:property-placeholder location="classpath:/context/application.properties" />
 		
+	<!-- Database Configuration -->
+	<import resource="hibernate.xml"/>
+		
 	<bean id="gson" class="com.jcrud.utils.json.GsonFactoryBean">
 		<constructor-arg>
 			<bean class="com.google.gson.GsonBuilder"/>
@@ -41,8 +44,19 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="restHandlerFactory" class="com.jcrud.impl.stub.StubRestHandlerFactory"/>
+	<bean id="genericDao" class="com.jcrud.jpa.GenericDaoImpl" >
+   		<property name="sessionFactory" ref="sessionFactory"/>
+   </bean>
 
+	<bean id="defaultRestHandler" class="com.jcrud.impl.DaoRestHandler" >
+   		<constructor-arg type="com.jcrud.jpa.GenericDao" ref="genericDao"/>
+   </bean>
+   
+	<bean id="restHandlerFactory" class="com.jcrud.impl.BasicRestHandlerFactory">
+		<constructor-arg type="com.jcrud.model.RestHandler" ref="defaultRestHandler"/>
+	</bean>
+	
+	
 	<bean id="crudDispatcher" class="com.jcrud.impl.CRUDDispatcherImpl">
 		<constructor-arg type="java.util.Map">
 			<util:map>

@@ -8,10 +8,12 @@ import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
 
 public class GenericDaoImpl extends HibernateDaoSupport implements GenericDao {
 
-	public String save(Object object) {
+	public long save(Object object) {
 
 		Serializable id = getHibernateTemplate().save(object);
-		return String.valueOf(id);
+		String strId = String.valueOf(id);
+
+		return Long.valueOf(strId);
 	}
 
 	public void update(Object object) {
@@ -22,16 +24,14 @@ public class GenericDaoImpl extends HibernateDaoSupport implements GenericDao {
 		getHibernateTemplate().delete(object);
 	}
 
-	public void deleteById(Class<?> daoClass, String id) {
+	public void deleteById(Class<?> daoClass, long id) {
 
 		Object object = getById(daoClass, id);
 		delete(object);
 	}
 
-	public <T> T getById(Class<T> daoClass, String id) {
-
-		@SuppressWarnings("unchecked")
-		T object = (T) getHibernateTemplate().get(daoClass, id);
+	public <T> T getById(Class<T> daoClass, long id) {
+		T object = getHibernateTemplate().get(daoClass, id);
 
 		return object;
 	}

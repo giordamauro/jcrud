@@ -2,7 +2,7 @@ package com.jcrud.impl.stub;
 
 public interface Idable {
 
-	String getId();
+	long getId();
 
-	void setId(String id);
+	void setId(long id);
 }

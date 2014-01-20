@@ -9,36 +9,27 @@ import java.util.Map;
 import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
 
-public class StubRestHandler<T> implements RestHandler<T> {
+public class HashedRestHandler implements RestHandler {
 
 	private static final int DEFAULT_ELEMENTS_COUNT = 20;
 	private static final int DEFAULT_PAGE_NUMBER = 0;
 
-	private final Map<String, T> resources = new HashMap<String, T>();
-
-	private final Class<T> resourceClass;
-
-	public StubRestHandler(Class<T> resourceClass) {
-		this.resourceClass = resourceClass;
-	}
+	private final Map<Long, Object> resources = new HashMap<Long, Object>();
 
 	@Override
-	public Class<T> getResourceClass() {
-		return resourceClass;
-	}
-
-	@Override
-	public T handlePOST(T newObject) {
-		String id = String.valueOf(resources.size());
+	public <T> T handlePOST(T newObject) {
+		long id = Long.valueOf(resources.size());
 		Idable idable = (Idable) newObject;
 		idable.setId(id);
-		resources.put(id, newObject);
+		resources.put(id, idable);
 		return newObject;
 	}
 
 	@Override
-	public T handlePUT(String id, T objectUpdates) throws CRUDResourceNotExistent {
+	public <T> T handlePUT(long id, T objectUpdates) throws CRUDResourceNotExistent {
 		if (!resources.containsKey(id)) {
+			@SuppressWarnings("unchecked")
+			Class<T> resourceClass = (Class<T>) objectUpdates.getClass();
 			throw new CRUDResourceNotExistent(resourceClass, id);
 		}
 		resources.put(id, objectUpdates);
@@ -46,7 +37,7 @@ public class StubRestHandler<T> implements RestHandler<T> {
 	}
 
 	@Override
-	public void handleDELETE(String id) throws CRUDResourceNotExistent {
+	public void handleDELETE(Class<?> resourceClass, long id) throws CRUDResourceNotExistent {
 		if (!resources.containsKey(id)) {
 			throw new CRUDResourceNotExistent(resourceClass, id);
 		}
@@ -54,16 +45,19 @@ public class StubRestHandler<T> implements RestHandler<T> {
 	}
 
 	@Override
-	public T handleGET(String id) throws CRUDResourceNotExistent {
+	public <T> T handleGET(Class<T> resourceClass, long id) throws CRUDResourceNotExistent {
 		if (!resources.containsKey(id)) {
 			throw new CRUDResourceNotExistent(resourceClass, id);
 		}
-		return resources.get(id);
+		@SuppressWarnings("unchecked")
+		T resource = (T) resources.get(id);
+
+		return resource;
 	}
 
 	@Override
-	public List<T> handleGET(int elementsCount, int pageNumber) {
-		List<T> values = new ArrayList<T>(resources.values());
+	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber) {
+		List<?> values = new ArrayList<Object>(resources.values());
 
 		if (elementsCount == -1) {
 			elementsCount = DEFAULT_ELEMENTS_COUNT;
@@ -80,12 +74,15 @@ public class StubRestHandler<T> implements RestHandler<T> {
 			toIndex = values.size();
 		}
 
-		List<T> elements = null;
+		List<?> elements = null;
 		if (fromIndex < toIndex) {
 			elements = values.subList(fromIndex, toIndex);
 		} else {
 			elements = Collections.emptyList();
 		}
-		return elements;
+		@SuppressWarnings("unchecked")
+		List<T> elementsList = (List<T>) elements;
+
+		return elementsList;
 	}
 }

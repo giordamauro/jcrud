@@ -6,9 +6,9 @@ public class CRUDResourceNotExistent extends Exception implements HttpResponseEx
 
 	private final Class<?> resourceClass;
 
-	private final String id;
+	private final long id;
 
-	public CRUDResourceNotExistent(Class<?> resourceClass, String id) {
+	public CRUDResourceNotExistent(Class<?> resourceClass, long id) {
 		this.resourceClass = resourceClass;
 		this.id = id;
 	}

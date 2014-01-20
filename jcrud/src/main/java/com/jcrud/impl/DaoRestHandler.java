@@ -2,58 +2,60 @@ package com.jcrud.impl;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.jcrud.jpa.GenericDao;
 import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
 
-public class DaoRestHandler<T> implements RestHandler<T> {
+public class DaoRestHandler implements RestHandler {
 
-	@Autowired
-	private GenericDao genericDao;
+	private final GenericDao genericDao;
 
-	private final Class<T> resourceClass;
-
-	public DaoRestHandler(Class<T> resourceClass) {
-		this.resourceClass = resourceClass;
+	public DaoRestHandler(GenericDao genericDao) {
+		this.genericDao = genericDao;
 	}
 
 	@Override
-	public Class<T> getResourceClass() {
-		return resourceClass;
+	public <T> T handlePOST(T newObject) {
+
+		@SuppressWarnings("unchecked")
+		Class<T> resourceClass = (Class<T>) newObject.getClass();
+		long id = genericDao.save(newObject);
+		T object = genericDao.getById(resourceClass, id);
+
+		return object;
 	}
 
 	@Override
-	public T handlePOST(T newObject) {
-		String id = genericDao.save(newObject);
-		// TODO:
-		// newObject.setId(id);
-		return newObject;
+	public <T> T handlePUT(long id, T objectUpdates) throws CRUDResourceNotExistent {
+		@SuppressWarnings("unchecked")
+		Class<T> resourceClass = (Class<T>) objectUpdates.getClass();
+
+		genericDao.update(objectUpdates);
+		T object = genericDao.getById(resourceClass, id);
+		return object;
 	}
 
 	@Override
-	public T handlePUT(String id, T objectUpdates) throws CRUDResourceNotExistent {
-		// TODO Auto-generated method stub
-		return null;
+	public void handleDELETE(Class<?> resourceClass, long id) throws CRUDResourceNotExistent {
+		Object object = genericDao.getById(resourceClass, id);
+		if (object == null) {
+			throw new CRUDResourceNotExistent(resourceClass, id);
+		}
+		genericDao.deleteById(resourceClass, id);
 	}
 
 	@Override
-	public void handleDELETE(String id) throws CRUDResourceNotExistent {
-		// TODO Auto-generated method stub
-
+	public <T> T handleGET(Class<T> resourceClass, long id) throws CRUDResourceNotExistent {
+		T object = genericDao.getById(resourceClass, id);
+		return object;
 	}
 
 	@Override
-	public T handleGET(String id) throws CRUDResourceNotExistent {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber) {
 
-	@Override
-	public List<T> handleGET(int elementsCount, int pageNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		int offset = elementsCount * pageNumber;
+		List<T> elements = genericDao.getElements(resourceClass, offset, elementsCount);
+		return elements;
 	}
 
 }

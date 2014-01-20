@@ -4,17 +4,15 @@ import java.util.List;
 
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
 
-public interface RestHandler<T> {
+public interface RestHandler {
 
-	Class<T> getResourceClass();
+	<T> T handlePOST(T newObject);
 
-	T handlePOST(T newObject);
+	<T> T handlePUT(long id, T objectUpdates) throws CRUDResourceNotExistent;
 
-	T handlePUT(String id, T objectUpdates) throws CRUDResourceNotExistent;
+	void handleDELETE(Class<?> resourceClass, long id) throws CRUDResourceNotExistent;
 
-	void handleDELETE(String id) throws CRUDResourceNotExistent;
+	<T> T handleGET(Class<T> resourceClass, long id) throws CRUDResourceNotExistent;
 
-	T handleGET(String id) throws CRUDResourceNotExistent;
-
-	List<T> handleGET(int elementsCount, int pageNumber);
+	<T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber);
 }

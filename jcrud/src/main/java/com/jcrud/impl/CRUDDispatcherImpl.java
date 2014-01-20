@@ -40,20 +40,21 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		HttpResponse response = null;
 
 		String path = request.getPath();
-		String id = null;
+		long id = -1;
 
 		Class<?> resourceClass = pathAssignments.get(path);
 
 		if (resourceClass == null) {
 			String pathWithId = path.substring(0, path.lastIndexOf("/"));
-			id = path.substring(path.lastIndexOf("/") + 1, path.length());
+			String strId = path.substring(path.lastIndexOf("/") + 1, path.length());
+			id = Long.valueOf(strId);
 
 			resourceClass = pathAssignments.get(pathWithId);
 		}
 
 		if (resourceClass != null) {
-			RestHandler<?> restHandler = restHandlerFactory.newRestHandler(resourceClass);
-			response = (id == null) ? getRestRequest(restHandler, request) : getRestRequestWithId(restHandler, request, id);
+			RestHandler restHandler = restHandlerFactory.getRestHandler(resourceClass);
+			response = (id == -1) ? getRestRequest(restHandler, request, resourceClass) : getRestRequestWithId(restHandler, request, resourceClass, id);
 		}
 
 		if (response == null) {
@@ -62,14 +63,13 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		return response;
 	}
 
-	private <T> HttpResponse getRestRequest(RestHandler<T> restHandler, HttpRequest request) {
+	private <T> HttpResponse getRestRequest(RestHandler restHandler, HttpRequest request, Class<T> resourceClass) {
 
 		HttpResponse response = null;
 
 		HttpMethod method = request.getMethod();
 		if (method == HttpMethod.POST) {
 
-			Class<T> resourceClass = restHandler.getResourceClass();
 			T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
 			T responseObject = restHandler.handlePOST(contentObject);
 
@@ -79,7 +79,7 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			int elementsCount = getIntegerQueryParam(request, "elementsCount");
 			int pageNumber = getIntegerQueryParam(request, "pageNumber");
 
-			List<T> elements = restHandler.handleGET(elementsCount, pageNumber);
+			List<T> elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber);
 			response = httpTypeAdapter.toHttpResponse(request, elements);
 		}
 
@@ -89,7 +89,7 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		return response;
 	}
 
-	private <T> HttpResponse getRestRequestWithId(RestHandler<T> restHandler, HttpRequest request, String id) {
+	private <T> HttpResponse getRestRequestWithId(RestHandler restHandler, HttpRequest request, Class<T> resourceClass, long id) {
 
 		HttpResponse response = null;
 
@@ -98,14 +98,13 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		try {
 			if (method == HttpMethod.DELETE) {
 
-				restHandler.handleDELETE(id);
+				restHandler.handleDELETE(resourceClass, id);
 				String successMessage = "Successfully deleted resource";
 
 				response = httpTypeAdapter.toHttpResponse(request, successMessage);
 
 			} else if (method == HttpMethod.PUT) {
 
-				Class<T> resourceClass = restHandler.getResourceClass();
 				T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
 				T responseObject = restHandler.handlePUT(id, contentObject);
 
@@ -113,7 +112,7 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 
 			} else if (method == HttpMethod.GET) {
 
-				T element = restHandler.handleGET(id);
+				T element = restHandler.handleGET(resourceClass, id);
 				response = httpTypeAdapter.toHttpResponse(request, element);
 			}
 

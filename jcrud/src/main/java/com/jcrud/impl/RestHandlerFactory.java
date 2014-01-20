@@ -4,5 +4,5 @@ import com.jcrud.model.RestHandler;
 
 public interface RestHandlerFactory {
 
-	<T> RestHandler<T> newRestHandler(Class<T> resourceClass);
+	RestHandler getRestHandler(Class<?> resourceClass);
 }

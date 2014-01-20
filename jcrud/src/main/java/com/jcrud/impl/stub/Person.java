@@ -1,11 +1,25 @@
 package com.jcrud.impl.stub;
 
-public class Person implements Idable {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
-	private String id;
+@Entity
+@Table(name = "person", catalog = "jpatest")
+public class Person {
 
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	@Column
+	private long id;
+
+	@Column
 	private String name;
 
+	@Column
 	private int age;
 
 	public String getName() {
@@ -24,13 +38,11 @@ public class Person implements Idable {
 		this.age = age;
 	}
 
-	@Override
-	public String getId() {
+	public long getId() {
 		return id;
 	}
 
-	@Override
-	public void setId(String id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 }
