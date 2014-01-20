@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.jcrud.model.CRUDDispatcher;
 import com.jcrud.model.HttpMethod;
@@ -21,6 +22,7 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 	private RestHandlerFactory restHandlerFactory;
 
 	@Autowired
+	@Qualifier("rootTypeAdapter")
 	private HttpTypeAdapter httpTypeAdapter;
 
 	public CRUDDispatcherImpl(Map<String, Class<?>> pathAssignments) {
@@ -71,14 +73,14 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
 			T responseObject = restHandler.handlePOST(contentObject);
 
-			response = httpTypeAdapter.toHttpResponse(responseObject);
+			response = httpTypeAdapter.toHttpResponse(request, responseObject);
 		} else if (method == HttpMethod.GET) {
 
 			int elementsCount = getIntegerQueryParam(request, "elementsCount");
 			int pageNumber = getIntegerQueryParam(request, "pageNumber");
 
 			List<T> elements = restHandler.handleGET(elementsCount, pageNumber);
-			response = httpTypeAdapter.toHttpResponse(elements);
+			response = httpTypeAdapter.toHttpResponse(request, elements);
 		}
 
 		if (response == null) {
@@ -97,6 +99,9 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			if (method == HttpMethod.DELETE) {
 
 				restHandler.handleDELETE(id);
+				String successMessage = "Successfully deleted resource";
+
+				response = httpTypeAdapter.toHttpResponse(request, successMessage);
 
 			} else if (method == HttpMethod.PUT) {
 
@@ -104,12 +109,12 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 				T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
 				T responseObject = restHandler.handlePUT(id, contentObject);
 
-				response = httpTypeAdapter.toHttpResponse(responseObject);
+				response = httpTypeAdapter.toHttpResponse(request, responseObject);
 
 			} else if (method == HttpMethod.GET) {
 
 				T element = restHandler.handleGET(id);
-				response = httpTypeAdapter.toHttpResponse(element);
+				response = httpTypeAdapter.toHttpResponse(request, element);
 			}
 
 		} catch (CRUDResourceNotExistent e) {

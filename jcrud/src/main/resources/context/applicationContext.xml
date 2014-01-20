@@ -26,8 +26,19 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="jsonTypeAdapter" class="com.jcrud.impl.JsonTypeAdapter">
+	<bean id="jsonTypeAdapter" class="com.jcrud.parsers.JsonTypeAdapter">
 		<constructor-arg type="com.google.gson.Gson" ref="gson"/>
+	</bean>
+	
+	<bean id="xmlTypeAdapter" class="com.jcrud.parsers.XmlTypeAdapter"/>
+
+	<bean id="rootTypeAdapter" class="com.jcrud.parsers.DispatcherTypeAdapter">
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="application/json" value-ref="jsonTypeAdapter"/>
+				<entry key="application/xml" value-ref="xmlTypeAdapter"/>
+			</util:map>
+		</constructor-arg>
 	</bean>
 
 	<bean id="restHandlerFactory" class="com.jcrud.impl.stub.StubRestHandlerFactory"/>

@@ -1,4 +1,4 @@
-package com.jcrud.impl;
+package com.jcrud.parsers;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -22,15 +22,14 @@ public class JsonTypeAdapter implements HttpTypeAdapter {
 	public <T> T getFromRequest(HttpRequest request, Class<T> resourceClass) {
 
 		InputStream content = request.getContent();
-		String json = getStringBodyContent(content);
-
-		T object = gson.fromJson(json, resourceClass);
+		String stringContent = getStringBodyContent(content);
+		T object = gson.fromJson(stringContent, resourceClass);
 
 		return object;
 	}
 
 	@Override
-	public HttpResponse toHttpResponse(Object responseObject) {
+	public HttpResponse toHttpResponse(HttpRequest request, Object responseObject) {
 
 		String json = gson.toJson(responseObject);
 		byte[] bytes = json.getBytes();
