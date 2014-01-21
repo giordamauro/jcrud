@@ -6,13 +6,13 @@ import java.util.List;
 public class QueryParser {
 
 	private final String rawSql;
-
 	private final QueryNode queryNode;
+
+	private final List<QueryNode> nodes = new ArrayList<QueryNode>();
 
 	public QueryParser(String rawSql) {
 
 		this.rawSql = rawSql;
-
 		queryNode = parseQuery(rawSql);
 	}
 
@@ -20,12 +20,15 @@ public class QueryParser {
 		return (QueryOperation) queryNode;
 	}
 
+	public String getSql() {
+		return rawSql;
+	}
+
 	private QueryNode parseQuery(String query) {
 
 		QueryNode queryNode = null;
 
 		String subQuery = null;
-		List<QueryNode> nodes = new ArrayList<QueryNode>();
 		while (query.contains("(")) {
 
 			subQuery = getSubQuery(query);
@@ -51,7 +54,7 @@ public class QueryParser {
 
 			QueryNode node1 = null;
 			String node1Word = words[operatorIndex - 1];
-			if (node2Word.equals("$")) {
+			if (node1Word.equals("$")) {
 				node1 = nodes.get(0);
 				nodes.remove(0);
 			} else {
@@ -98,7 +101,7 @@ public class QueryParser {
 
 	public static void main(String[] args) {
 
-		String query = "j <> (a like ((b OR c) and cd))";
+		String query = "j <> (a like (b or c))";
 
 		QueryNode queryNode = new QueryParser(query).getQueryOperation();
 		System.out.println(queryNode);

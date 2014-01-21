@@ -2,8 +2,8 @@ package com.jcrud.query;
 
 public enum Operator {
 
-	AND("AND", true), OR("OR", true), LIKE("LIKE", false), EQUAL("=", false), NOT_EQUAL("<>", false), GREATER(">", false), LESS("<", false), GREATER_EQUAL(">=", false), LESS_EQUAL("<=", false), BETWEEN(
-			"BETWEEN", false), IN("IN", false);
+	AND("AND", true), OR("OR", true), NOT("NOT", true), LIKE("LIKE", false), EQUAL("=", false), NOT_EQUAL("<>", false), GREATER(">", false), LESS("<", false), GREATER_EQUAL(">=", false), LESS_EQUAL(
+			"<=", false), BETWEEN("BETWEEN", false), IN("IN", false);
 
 	private final String symbol;
 
