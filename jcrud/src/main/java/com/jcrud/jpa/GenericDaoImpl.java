@@ -36,12 +36,18 @@ public class GenericDaoImpl extends HibernateDaoSupport implements GenericDao {
 		return object;
 	}
 
-	public <T> List<T> getElements(Class<T> daoClass, int offset, int limit) {
-
-		DetachedCriteria criteria = DetachedCriteria.forClass(daoClass);
+	public <T> List<T> getElements(Class<T> daoClass, DetachedCriteria criteria, int offset, int limit) {
 
 		@SuppressWarnings("unchecked")
 		List<T> elements = getHibernateTemplate().findByCriteria(criteria, offset, limit);
+
+		return elements;
+	}
+
+	public <T> List<T> getElements(Class<T> daoClass, int offset, int limit) {
+
+		DetachedCriteria criteria = DetachedCriteria.forClass(daoClass);
+		List<T> elements = getElements(daoClass, criteria, offset, limit);
 
 		return elements;
 	}

@@ -58,7 +58,7 @@ public class HttpRequestImpl implements HttpRequest {
 	}
 
 	@Override
-	public List<String> getQueryParam(String name) {
+	public List<String> getQueryParamValues(String name) {
 		return queryParams.get(name);
 	}
 
@@ -103,5 +103,18 @@ public class HttpRequestImpl implements HttpRequest {
 			throw new IllegalArgumentException("Params cannot be null");
 		}
 		queryParams.putAll(params);
+	}
+
+	@Override
+	public String getQueryParam(String name) {
+
+		List<String> queryValues = getQueryParamValues(name);
+		if (queryValues == null) {
+			return null;
+		}
+		if (queryValues.size() == 1) {
+			return queryValues.get(0);
+		}
+		throw new IllegalStateException(String.format("Query param '%s' is not single values"));
 	}
 }

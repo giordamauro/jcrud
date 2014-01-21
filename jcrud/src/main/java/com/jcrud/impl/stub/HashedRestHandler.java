@@ -85,4 +85,9 @@ public class HashedRestHandler implements RestHandler {
 
 		return elementsList;
 	}
+
+	@Override
+	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber, String query) {
+		throw new UnsupportedOperationException();
+	}
 }

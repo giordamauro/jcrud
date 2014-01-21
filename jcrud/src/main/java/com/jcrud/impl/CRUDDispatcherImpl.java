@@ -1,5 +1,7 @@
 package com.jcrud.impl;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -79,7 +81,19 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			int elementsCount = getIntegerQueryParam(request, "elementsCount");
 			int pageNumber = getIntegerQueryParam(request, "pageNumber");
 
-			List<T> elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber);
+			List<T> elements = null;
+			String query = request.getQueryParam("query");
+
+			if (query != null) {
+				try {
+					query = URLDecoder.decode(query, "UTF-8");
+				} catch (UnsupportedEncodingException e) {
+					throw new IllegalStateException(e);
+				}
+				elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber, query);
+			} else {
+				elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber);
+			}
 			response = httpTypeAdapter.toHttpResponse(request, elements);
 		}
 
@@ -130,10 +144,9 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 
 		int intValue = -1;
 
-		List<String> queryParam = request.getQueryParam(queryName);
-		if (queryParam != null && queryParam.size() == 1) {
-			String paramValue = queryParam.get(0);
-			return Integer.valueOf(paramValue);
+		String queryParam = request.getQueryParam(queryName);
+		if (queryParam != null) {
+			return Integer.valueOf(queryParam);
 		}
 
 		return intValue;

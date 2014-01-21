@@ -16,7 +16,9 @@ public interface HttpRequest {
 
 	Map<String, List<String>> getQueryParams();
 
-	List<String> getQueryParam(String name);
+	List<String> getQueryParamValues(String name);
+
+	String getQueryParam(String name);
 
 	InputStream getContent();
 }

@@ -43,11 +43,7 @@ public class DispatcherTypeAdapter implements HttpTypeAdapter {
 	@Override
 	public HttpResponse toHttpResponse(HttpRequest request, Object responseObject) {
 
-		String format = null;
-		List<String> queryValues = request.getQueryParam("format");
-		if (queryValues != null && queryValues.size() == 1) {
-			format = queryValues.get(0);
-		}
+		String format = request.getQueryParam("format");
 
 		HttpTypeAdapter adapter = null;
 
