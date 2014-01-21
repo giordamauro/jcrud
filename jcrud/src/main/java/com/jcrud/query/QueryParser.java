@@ -5,9 +5,6 @@ import java.util.List;
 
 public class QueryParser {
 
-	private final List<Integer> leftTokens = new ArrayList<Integer>();
-	private final List<Integer> rightTokens = new ArrayList<Integer>();
-
 	private final String rawSql;
 
 	private final QueryNode queryNode;
@@ -15,69 +12,88 @@ public class QueryParser {
 	public QueryParser(String rawSql) {
 
 		this.rawSql = rawSql;
-		findQueryTokens();
 
-		queryNode = parseQuery(0, rawSql);
-	}
-
-	private void findQueryTokens() {
-
-		for (int i = 0; i < rawSql.length(); i++) {
-			char charAtI = rawSql.charAt(i);
-
-			if (charAtI == '(') {
-				leftTokens.add(i);
-			} else if (charAtI == ')') {
-				rightTokens.add(i);
-			}
-		}
-
-		if (leftTokens.size() != rightTokens.size()) {
-			throw new IllegalStateException("Wrong number of parenthesis in the query");
-		}
-	}
-
-	private QueryNode parseQuery(int leftIndex, String query) {
-
-		QueryNode queryNode = null;
-
-		String subQuery = null;
-		if (leftIndex < leftTokens.size()) {
-			int leftmosttLeft = leftTokens.get(leftIndex);
-			int rightestRight = rightTokens.get(rightTokens.size() - leftIndex - 1);
-
-			subQuery = rawSql.substring(leftmosttLeft + 1, rightestRight);
-		}
-
-		if (subQuery != null) {
-			query = query.replace("(" + subQuery + ")", "$");
-		}
-		if (query.contains(" ")) {
-			String[] words = query.split(" ");
-			// TODO: extender a otras operaciones (no solo de 3 elementos)
-			if (words.length == 3) {
-				Operator operator = Operator.valueOfSql(words[1]);
-
-				String node1Word = words[0];
-				QueryNode node1 = (node1Word.equals("$")) ? parseQuery(leftIndex + 1, subQuery) : new QueryId(node1Word);
-
-				String node2Word = words[2];
-				QueryNode node2 = (node2Word.equals("$")) ? parseQuery(leftIndex + 1, subQuery) : new QueryId(node2Word);
-
-				queryNode = new QueryOperation(node1, operator, node2);
-
-			} else {
-				throw new UnsupportedOperationException("not done yet for: " + query);
-			}
-		} else {
-			queryNode = new QueryId(query);
-		}
-
-		return queryNode;
+		queryNode = parseQuery(rawSql);
 	}
 
 	public QueryOperation getQueryOperation() {
 		return (QueryOperation) queryNode;
+	}
+
+	private QueryNode parseQuery(String query) {
+
+		QueryNode queryNode = null;
+
+		String subQuery = null;
+		List<QueryNode> nodes = new ArrayList<QueryNode>();
+		while (query.contains("(")) {
+
+			subQuery = getSubQuery(query);
+			query = query.replace("(" + subQuery + ")", "$");
+
+			QueryNode node = parseQuery(subQuery);
+			nodes.add(node);
+		}
+		String[] words = query.split(" ");
+
+		if (words.length == 3) {
+			int operatorIndex = words.length - 2;
+			Operator operator = Operator.valueOfSql(words[operatorIndex]);
+
+			QueryNode node2 = null;
+			String node2Word = words[operatorIndex + 1];
+			if (node2Word.equals("$")) {
+				node2 = nodes.get(0);
+				nodes.remove(0);
+			} else {
+				node2 = new QueryId(node2Word);
+			}
+
+			QueryNode node1 = null;
+			String node1Word = words[operatorIndex - 1];
+			if (node2Word.equals("$")) {
+				node1 = nodes.get(0);
+				nodes.remove(0);
+			} else {
+				node1 = new QueryId(node1Word);
+			}
+
+			queryNode = new QueryOperation(node1, operator, node2);
+
+		} else if (words.length == 1) {
+			queryNode = new QueryId(query);
+		}
+		if (queryNode != null) {
+			return queryNode;
+		}
+
+		throw new IllegalStateException("Cannot parse query: " + query);
+	}
+
+	private String getSubQuery(String query) {
+
+		int rightestToken = getRightestToken(query);
+
+		for (int i = rightestToken + 1; i < query.length(); i++) {
+			char charAtI = query.charAt(i);
+
+			if (charAtI == ')') {
+				return query.substring(rightestToken + 1, i);
+			}
+		}
+		throw new IllegalStateException("Wrong number of parenthesis");
+	}
+
+	private int getRightestToken(String query) {
+
+		for (int i = query.length() - 1; i >= 0; i--) {
+			char charAtI = query.charAt(i);
+
+			if (charAtI == '(') {
+				return i;
+			}
+		}
+		return -1;
 	}
 
 	public static void main(String[] args) {
