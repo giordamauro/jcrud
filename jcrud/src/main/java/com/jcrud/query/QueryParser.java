@@ -61,7 +61,23 @@ public class QueryParser {
 				node1 = new QueryId(node1Word);
 			}
 
-			queryNode = new QueryOperation(node1, operator, node2);
+			queryNode = new QueryTernaryOp(node1, operator, node2);
+
+		} else if (words.length == 2) {
+
+			int operatorIndex = words.length - 2;
+			Operator operator = Operator.valueOfSql(words[operatorIndex]);
+
+			QueryNode node = null;
+			String nodeWord = words[operatorIndex + 1];
+			if (nodeWord.equals("$")) {
+				node = nodes.get(0);
+				nodes.remove(0);
+			} else {
+				node = new QueryId(nodeWord);
+			}
+
+			queryNode = new QueryBinaryOp(operator, node);
 
 		} else if (words.length == 1) {
 			queryNode = new QueryId(query);
@@ -101,7 +117,7 @@ public class QueryParser {
 
 	public static void main(String[] args) {
 
-		String query = "j <> (a like (b or c))";
+		String query = "NOT (id = 3)";
 
 		QueryNode queryNode = new QueryParser(query).getQueryOperation();
 		System.out.println(queryNode);

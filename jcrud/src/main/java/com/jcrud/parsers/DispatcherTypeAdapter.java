@@ -21,7 +21,7 @@ public class DispatcherTypeAdapter implements HttpTypeAdapter {
 	public <T> T getFromRequest(HttpRequest request, Class<T> resourceClass) {
 
 		String contentType = null;
-		List<String> headerValues = request.getHeader("content-type");
+		List<String> headerValues = request.getHeaderValues("content-type");
 		if (headerValues != null && headerValues.size() == 1) {
 			contentType = headerValues.get(0);
 		}

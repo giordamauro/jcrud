@@ -48,7 +48,7 @@ public class HttpRequestImpl implements HttpRequest {
 	}
 
 	@Override
-	public List<String> getHeader(String name) {
+	public List<String> getHeaderValues(String name) {
 		return headers.get(name);
 	}
 
@@ -115,6 +115,19 @@ public class HttpRequestImpl implements HttpRequest {
 		if (queryValues.size() == 1) {
 			return queryValues.get(0);
 		}
-		throw new IllegalStateException(String.format("Query param '%s' is not single values"));
+		throw new IllegalStateException(String.format("Query param '%s' is not single valued"));
+	}
+
+	@Override
+	public String getHeader(String name) {
+
+		List<String> headerValues = getHeaderValues(name);
+		if (headerValues == null) {
+			return null;
+		}
+		if (headerValues.size() == 1) {
+			return headerValues.get(0);
+		}
+		throw new IllegalStateException(String.format("Header '%s' is not single valued"));
 	}
 }

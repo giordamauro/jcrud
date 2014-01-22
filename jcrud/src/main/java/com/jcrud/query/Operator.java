@@ -2,24 +2,34 @@ package com.jcrud.query;
 
 public enum Operator {
 
-	AND("AND", true), OR("OR", true), NOT("NOT", true), LIKE("LIKE", false), EQUAL("=", false), NOT_EQUAL("<>", false), GREATER(">", false), LESS("<", false), GREATER_EQUAL(">=", false), LESS_EQUAL(
-			"<=", false), BETWEEN("BETWEEN", false), IN("IN", false);
+	AND(Type.LOGICAL), OR(Type.LOGICAL), NOT(Type.LOGICAL), LIKE(Type.ARITHMETICAL), EQUAL("=", Type.ARITHMETICAL), NOT_EQUAL("<>", Type.ARITHMETICAL), GREATER(">", Type.ARITHMETICAL), LESS("<",
+			Type.ARITHMETICAL), GREATER_EQUAL(">=", Type.ARITHMETICAL), LESS_EQUAL("<=", Type.ARITHMETICAL), BETWEEN(Type.ARITHMETICAL), IN(Type.ARITHMETICAL), MIN(Type.FUNCTION), MAX(Type.FUNCTION), AVG(
+			Type.FUNCTION), COUNT(Type.FUNCTION), COUNT_DISTINCT("COUNT-DISTINCT", Type.FUNCTION), SUM(Type.FUNCTION);
+
+	public static enum Type {
+		ARITHMETICAL, LOGICAL, FUNCTION
+	}
 
 	private final String symbol;
 
-	private final boolean isLogical;
+	private final Type type;
 
-	private Operator(String symbol, boolean isLogical) {
+	private Operator(String symbol, Type type) {
 		this.symbol = symbol;
-		this.isLogical = isLogical;
+		this.type = type;
+	}
+
+	private Operator(Type type) {
+		this.symbol = name();
+		this.type = type;
 	}
 
 	public String getSymbol() {
 		return symbol;
 	}
 
-	public boolean isLogical() {
-		return isLogical;
+	public Type getType() {
+		return type;
 	}
 
 	public static Operator valueOfSql(String sql) {

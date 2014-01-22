@@ -12,7 +12,9 @@ public interface HttpRequest {
 
 	Map<String, List<String>> getHeaders();
 
-	List<String> getHeader(String name);
+	String getHeader(String name);
+
+	List<String> getHeaderValues(String name);
 
 	Map<String, List<String>> getQueryParams();
 

@@ -82,7 +82,10 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			int pageNumber = getIntegerQueryParam(request, "pageNumber");
 
 			List<T> elements = null;
-			String query = request.getQueryParam("query");
+
+			String filterParamName = "filter";
+
+			String query = request.getQueryParam(filterParamName);
 
 			if (query != null) {
 				try {
@@ -90,6 +93,10 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 				} catch (UnsupportedEncodingException e) {
 					throw new IllegalStateException(e);
 				}
+			} else {
+				query = request.getHeader(filterParamName);
+			}
+			if (query != null) {
 				elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber, query);
 			} else {
 				elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber);
