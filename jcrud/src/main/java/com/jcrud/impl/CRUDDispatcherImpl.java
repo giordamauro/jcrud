@@ -1,7 +1,5 @@
 package com.jcrud.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
@@ -78,29 +76,7 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			response = httpTypeAdapter.toHttpResponse(request, responseObject);
 		} else if (method == HttpMethod.GET) {
 
-			int elementsCount = getIntegerQueryParam(request, "elementsCount");
-			int pageNumber = getIntegerQueryParam(request, "pageNumber");
-
-			List<T> elements = null;
-
-			String filterParamName = "filter";
-
-			String query = request.getQueryParam(filterParamName);
-
-			if (query != null) {
-				try {
-					query = URLDecoder.decode(query, "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					throw new IllegalStateException(e);
-				}
-			} else {
-				query = request.getHeader(filterParamName);
-			}
-			if (query != null) {
-				elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber, query);
-			} else {
-				elements = restHandler.handleGET(resourceClass, elementsCount, pageNumber);
-			}
+			List<T> elements = restHandler.handleGET(request, resourceClass);
 			response = httpTypeAdapter.toHttpResponse(request, elements);
 		}
 
@@ -145,17 +121,5 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		}
 
 		return response;
-	}
-
-	private int getIntegerQueryParam(HttpRequest request, String queryName) {
-
-		int intValue = -1;
-
-		String queryParam = request.getQueryParam(queryName);
-		if (queryParam != null) {
-			return Integer.valueOf(queryParam);
-		}
-
-		return intValue;
 	}
 }

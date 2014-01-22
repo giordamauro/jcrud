@@ -1,13 +1,17 @@
 package com.jcrud.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.URLDecoder;
 import java.util.List;
 
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import com.jcrud.jpa.GenericDao;
+import com.jcrud.model.HttpRequest;
 import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
 import com.jcrud.query.Operator;
@@ -66,23 +70,31 @@ public class DaoRestHandler implements RestHandler {
 	}
 
 	@Override
-	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber) {
+	public <T> List<T> handleGET(HttpRequest request, Class<T> resourceClass) {
 
+		int elementsCount = getIntegerQueryParam(request, "elementsCount");
 		if (elementsCount == -1) {
 			elementsCount = DEFAULT_ELEMENTS_COUNT;
 		}
 
+		int pageNumber = getIntegerQueryParam(request, "pageNumber");
 		if (pageNumber == -1) {
 			pageNumber = DEFAULT_PAGE_NUMBER;
 		}
 
-		int offset = elementsCount * pageNumber;
-		List<T> elements = genericDao.getElements(resourceClass, offset, elementsCount);
-		return elements;
-	}
+		String filterParamName = "filter";
 
-	@Override
-	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber, String query) {
+		String query = request.getQueryParam(filterParamName);
+
+		if (query != null) {
+			try {
+				query = URLDecoder.decode(query, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				throw new IllegalStateException(e);
+			}
+		} else {
+			query = request.getHeader(filterParamName);
+		}
 
 		DetachedCriteria criteria = DetachedCriteria.forClass(resourceClass);
 		QueryOperation queryOp = new QueryParser(query).getQueryOperation();
@@ -90,12 +102,29 @@ public class DaoRestHandler implements RestHandler {
 		Criterion criterion = getQueryCritierion(queryOp, resourceClass);
 		criteria.add(criterion);
 
-		if (elementsCount == -1) {
-			elementsCount = DEFAULT_ELEMENTS_COUNT;
-		}
+		List<String> orderValues = request.getQueryParamValues("order");
+		List<String> orderTypeValues = request.getQueryParamValues("orderType");
 
-		if (pageNumber == -1) {
-			pageNumber = DEFAULT_PAGE_NUMBER;
+		if (orderValues != null) {
+			for (int i = 0; i < orderValues.size(); i++) {
+
+				String orderValue = orderValues.get(i);
+				String orderType = "asc";
+
+				if (orderTypeValues != null && i < orderTypeValues.size()) {
+					orderType = orderTypeValues.get(i);
+				}
+
+				if (orderType.equalsIgnoreCase("asc")) {
+					criteria.addOrder(Order.asc(orderValue));
+
+				} else if (orderType.equalsIgnoreCase("desc")) {
+					criteria.addOrder(Order.desc(orderValue));
+
+				} else {
+					throw new IllegalStateException(String.format("Cannot order with type '%s'", orderType));
+				}
+			}
 		}
 
 		int offset = elementsCount * pageNumber;
@@ -219,5 +248,17 @@ public class DaoRestHandler implements RestHandler {
 		} catch (Exception e) {
 			throw new IllegalStateException(e);
 		}
+	}
+
+	private int getIntegerQueryParam(HttpRequest request, String queryName) {
+
+		int intValue = -1;
+
+		String queryParam = request.getQueryParam(queryName);
+		if (queryParam != null) {
+			return Integer.valueOf(queryParam);
+		}
+
+		return intValue;
 	}
 }

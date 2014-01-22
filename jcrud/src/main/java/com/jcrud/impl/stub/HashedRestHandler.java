@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.jcrud.model.HttpRequest;
 import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
 
@@ -56,13 +57,16 @@ public class HashedRestHandler implements RestHandler {
 	}
 
 	@Override
-	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber) {
+	public <T> List<T> handleGET(HttpRequest request, Class<T> resourceClass) {
+
 		List<?> values = new ArrayList<Object>(resources.values());
 
+		int elementsCount = getIntegerQueryParam(request, "elementsCount");
 		if (elementsCount == -1) {
 			elementsCount = DEFAULT_ELEMENTS_COUNT;
 		}
 
+		int pageNumber = getIntegerQueryParam(request, "pageNumber");
 		if (pageNumber == -1) {
 			pageNumber = DEFAULT_PAGE_NUMBER;
 		}
@@ -86,8 +90,15 @@ public class HashedRestHandler implements RestHandler {
 		return elementsList;
 	}
 
-	@Override
-	public <T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber, String query) {
-		throw new UnsupportedOperationException();
+	private int getIntegerQueryParam(HttpRequest request, String queryName) {
+
+		int intValue = -1;
+
+		String queryParam = request.getQueryParam(queryName);
+		if (queryParam != null) {
+			return Integer.valueOf(queryParam);
+		}
+
+		return intValue;
 	}
 }

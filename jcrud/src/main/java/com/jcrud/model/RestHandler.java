@@ -14,7 +14,5 @@ public interface RestHandler {
 
 	<T> T handleGET(Class<T> resourceClass, long id) throws CRUDResourceNotExistent;
 
-	<T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber);
-
-	<T> List<T> handleGET(Class<T> resourceClass, int elementsCount, int pageNumber, String query);
+	<T> List<T> handleGET(HttpRequest request, Class<T> resourceClass);
 }
