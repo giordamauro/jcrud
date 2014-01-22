@@ -67,4 +67,8 @@
 
 	<bean id="crudServletAdapter" class="com.jcrud.servlet.impl.CRUDServletAdapterImpl"/>
 
+	<bean id="reseasyServlet" class="org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher"/>
+   	<bean id="crudServlet" class="com.jcrud.servlet.CRUDServletContainer"/>       
+	
+
 </beans>

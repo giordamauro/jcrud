@@ -47,9 +47,13 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		if (resourceClass == null) {
 			String pathWithId = path.substring(0, path.lastIndexOf("/"));
 			String strId = path.substring(path.lastIndexOf("/") + 1, path.length());
-			id = Long.valueOf(strId);
 
-			resourceClass = pathAssignments.get(pathWithId);
+			try {
+				id = Long.valueOf(strId);
+				resourceClass = pathAssignments.get(pathWithId);
+			} catch (Exception e) {
+				// TODO: Log that trying to read id failed.
+			}
 		}
 
 		if (resourceClass != null) {
