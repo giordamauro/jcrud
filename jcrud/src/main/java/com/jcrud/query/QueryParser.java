@@ -117,7 +117,7 @@ public class QueryParser {
 
 	public static void main(String[] args) {
 
-		String query = "NOT (id = 3)";
+		String query = "a BETWEEN (id AND 3)";
 
 		QueryNode queryNode = new QueryParser(query).getQueryOperation();
 		System.out.println(queryNode);

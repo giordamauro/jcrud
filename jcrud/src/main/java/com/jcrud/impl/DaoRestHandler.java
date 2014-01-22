@@ -150,28 +150,48 @@ public class DaoRestHandler implements RestHandler {
 		} else if (operator.getType() == Operator.Type.ARITHMETICAL) {
 
 			if (queryOp.isTernary()) {
-				QueryId id1 = (QueryId) queryNode1;
-				QueryId id2 = (QueryId) queryNode2;
 
-				String propertyName = id1.getSql();
-				Object value = getCastedToFieldType(resourceClass, propertyName, id2.getSql());
+				if (operator == Operator.BETWEEN) {
 
-				if (operator == Operator.EQUAL) {
-					return Restrictions.eq(propertyName, value);
-				} else if (operator == Operator.GREATER) {
-					return Restrictions.gt(propertyName, value);
-				} else if (operator == Operator.GREATER_EQUAL) {
-					return Restrictions.ge(propertyName, value);
-				} else if (operator == Operator.LESS) {
-					return Restrictions.lt(propertyName, value);
-				} else if (operator == Operator.LESS_EQUAL) {
-					return Restrictions.gt(propertyName, value);
-				} else if (operator == Operator.GREATER) {
-					return Restrictions.le(propertyName, value);
-				} else if (operator == Operator.LIKE) {
-					return Restrictions.like(propertyName, value);
-				} else if (operator == Operator.NOT_EQUAL) {
-					return Restrictions.ne(propertyName, value);
+					QueryId propertyNode = (QueryId) queryNode1;
+					String propertyName = propertyNode.getText();
+
+					QueryTernaryOp betweenOpNode = (QueryTernaryOp) queryNode2;
+					Operator betweenOperator = betweenOpNode.getOperator();
+					QueryId lo = (QueryId) betweenOpNode.getQueryNode1();
+					QueryId hi = (QueryId) betweenOpNode.getQueryNode2();
+
+					if (betweenOperator == Operator.AND) {
+						Object loValue = getCastedToFieldType(resourceClass, propertyName, lo.getText());
+						Object hiValue = getCastedToFieldType(resourceClass, propertyName, hi.getText());
+
+						return Restrictions.between(propertyName, loValue, hiValue);
+					}
+				} else {
+
+					QueryId id1 = (QueryId) queryNode1;
+					QueryId id2 = (QueryId) queryNode2;
+
+					String propertyName = id1.getText();
+					Object value = getCastedToFieldType(resourceClass, propertyName, id2.getText());
+
+					if (operator == Operator.EQUAL) {
+						return Restrictions.eq(propertyName, value);
+					} else if (operator == Operator.GREATER) {
+						return Restrictions.gt(propertyName, value);
+					} else if (operator == Operator.GREATER_EQUAL) {
+						return Restrictions.ge(propertyName, value);
+					} else if (operator == Operator.LESS) {
+						return Restrictions.lt(propertyName, value);
+					} else if (operator == Operator.LESS_EQUAL) {
+						return Restrictions.gt(propertyName, value);
+					} else if (operator == Operator.GREATER) {
+						return Restrictions.le(propertyName, value);
+					} else if (operator == Operator.LIKE) {
+						return Restrictions.like(propertyName, value);
+					} else if (operator == Operator.NOT_EQUAL) {
+						return Restrictions.ne(propertyName, value);
+					}
 				}
 			}
 		}

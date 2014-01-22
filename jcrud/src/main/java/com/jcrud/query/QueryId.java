@@ -9,7 +9,7 @@ public class QueryId implements QueryNode {
 	}
 
 	@Override
-	public String getSql() {
+	public String getText() {
 		return identifier;
 	}
 

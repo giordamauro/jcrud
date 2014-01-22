@@ -13,9 +13,9 @@ public class QueryTernaryOp implements QueryOperation {
 	}
 
 	@Override
-	public String getSql() {
+	public String getText() {
 
-		return "(" + queryNode1.getSql() + " " + operator.getSymbol() + " " + queryNode2.getSql() + ")";
+		return "(" + queryNode1.getText() + " " + operator.getSymbol() + " " + queryNode2.getText() + ")";
 	}
 
 	public QueryNode getQueryNode1() {

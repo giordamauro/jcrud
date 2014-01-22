@@ -11,9 +11,9 @@ public class QueryBinaryOp implements QueryOperation {
 	}
 
 	@Override
-	public String getSql() {
+	public String getText() {
 
-		return "(" + operator.getSymbol() + " " + queryNode.getSql() + ")";
+		return "(" + operator.getSymbol() + " " + queryNode.getText() + ")";
 	}
 
 	public QueryNode getQueryNode() {

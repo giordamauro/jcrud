@@ -2,7 +2,7 @@ package com.jcrud.query;
 
 public interface QueryNode {
 
-	String getSql();
+	String getText();
 
 	boolean isOperation();
 }
