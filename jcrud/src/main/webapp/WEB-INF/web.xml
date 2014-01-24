@@ -30,22 +30,23 @@
 		<listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
 	</listener>
  
-<!-- 	<servlet> -->
-<!-- 		<servlet-name>resteasy-servlet</servlet-name> -->
-<!-- 		<servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class> -->
-<!-- 	</servlet> -->
 	<servlet>
 		<servlet-name>Service Container</servlet-name>
 		<servlet-class>com.jcrud.servlet.CompositeServletContainer</servlet-class>
+	</servlet>
+ 	<servlet>
+		<servlet-name>Mock Container</servlet-name>
+		<servlet-class>com.apimock.servlet.MockServletContainer</servlet-class>
 	</servlet>
  
  	<servlet-mapping>
 		<servlet-name>Service Container</servlet-name>
 		<url-pattern>/v1/*</url-pattern>
 	</servlet-mapping>
-<!-- 	<servlet-mapping> -->
-<!-- 		<servlet-name>resteasy-servlet</servlet-name> -->
-<!-- 		<url-pattern>/rest/*</url-pattern> -->
-<!-- 	</servlet-mapping> -->
+	
+	<servlet-mapping>
+		<servlet-name>Mock Container</servlet-name>
+		<url-pattern>/*</url-pattern>
+	</servlet-mapping>
 	
 </web-app>

@@ -21,7 +21,7 @@
 	<context:property-placeholder location="classpath:/context/application.properties" />
 		
 	<!-- Database Configuration -->
-	<import resource="hibernate.xml"/>
+	<import resource="hibernateContext.xml"/>
 	
 	
 	<bean id="gsonBuilder" class="com.google.gson.GsonBuilder"/>
@@ -99,6 +99,19 @@
 	<bean id="genericDao" class="com.jcrud.jpa.GenericDaoImpl" >
    		<property name="sessionFactory" ref="sessionFactory"/>
    </bean>
+
+
+	<bean id="mockDispatcher" class="com.apimock.servlet.impl.MockDispatcherImpl">
+		<constructor-arg>
+			<bean class="com.apimock.impl.MockRepositoryConsumerImpl">
+				<constructor-arg>
+					<bean class="com.apimock.impl.MockRepositoryImpl">
+						<constructor-arg ref="genericDao"/>
+					</bean>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
 
 	<bean id="defaultRestHandler" class="com.jcrud.impl.DaoRestHandler" >
    		<constructor-arg type="com.jcrud.jpa.GenericDao" ref="genericDao"/>

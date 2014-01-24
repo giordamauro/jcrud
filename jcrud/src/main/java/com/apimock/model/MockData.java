@@ -2,7 +2,9 @@ package com.apimock.model;
 
 public interface MockData {
 
-	public MockRequest getRequest();
+	long getId();
 
-	public MockResponse getResponse();
+	MockRequest getRequest();
+
+	MockResponse getResponse();
 }

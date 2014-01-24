@@ -45,7 +45,7 @@ public class MockDispatcherImpl implements MockDispatcher {
 
 		} catch (MockServiceMatcherConflict e) {
 
-			return ExceptionResponse.new400("Service matcher conflict - update priorities");
+			return ExceptionResponse.new400(String.format("Service matching conflict between MocksData id: '%s' and '%s' - update priorities", e.getConflictMockData1(), e.getConflictMockData2()));
 		}
 	}
 

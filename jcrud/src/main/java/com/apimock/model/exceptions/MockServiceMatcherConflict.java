@@ -1,24 +1,22 @@
 package com.apimock.model.exceptions;
 
-
 public class MockServiceMatcherConflict extends Exception {
 
 	private static final long serialVersionUID = -8767255369555599701L;
 
-	// private final ServiceMatcher matcher1;
-	// private final ServiceMatcher matcher2;
+	private final long conflictMockData1;
+	private final long conflictMockData2;
 
-	// public MockServiceMatcherConflict(ServiceMatcher serviceMatcher,
-	// ServiceMatcher matcher) {
-	// this.matcher1 = serviceMatcher;
-	// this.matcher2 = matcher;
-	// }
+	public MockServiceMatcherConflict(long conflictMockData1, long conflictMockData2) {
+		this.conflictMockData1 = conflictMockData1;
+		this.conflictMockData2 = conflictMockData2;
+	}
 
-	// public ServiceMatcher getMatcher1() {
-	// return matcher1;
-	// }
-	//
-	// public ServiceMatcher getMatcher2() {
-	// return matcher2;
-	// }
+	public long getConflictMockData1() {
+		return conflictMockData1;
+	}
+
+	public long getConflictMockData2() {
+		return conflictMockData2;
+	}
 }

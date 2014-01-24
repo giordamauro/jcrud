@@ -13,17 +13,6 @@ public class MockRequestEvaluatorJsonSerializer implements CustomJsonSerializer<
 	public JsonElement serialize(MockRequestEvaluatorEntity src, Type typeOfSrc, JsonSerializationContext context) {
 
 		Class<?> srcType = src.getClass();
-		//
-		// Object object = srcType.cast(src);
-
-		// JsonObject jsonElement = new JsonObject();
-		//
-		// jsonElement.add("id", new JsonPrimitive(src.getId()));
-		// jsonElement.add("evaluatorClass", new
-		// JsonPrimitive(src.getClass().getName()));
-
-		// JsonElement headers = new JsonPrimitive("No los conozco todaviaa");
-
 		JsonElement jsonElement = context.serialize(src, srcType);
 
 		return jsonElement;

@@ -89,7 +89,7 @@ public class DaoRestHandler implements RestHandler {
 		}
 
 		int offset = elementsCount * pageNumber;
-		List<T> elements = genericDao.getElements(resourceClass, criteria, offset, elementsCount);
+		List<T> elements = genericDao.getElements(criteria, offset, elementsCount);
 
 		return elements;
 	}
