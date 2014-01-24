@@ -1,10 +1,11 @@
-package com.jcrud.utils.json;
+package com.jcrud.utils.json.deserializers;
 
 import java.lang.reflect.Type;
 
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
+import com.jcrud.utils.json.CustomJsonDeserializer;
 
 public class ImplementationJsonDeserializer<T> implements CustomJsonDeserializer<T> {
 

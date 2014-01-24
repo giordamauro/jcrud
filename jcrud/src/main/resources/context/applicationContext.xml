@@ -22,10 +22,54 @@
 		
 	<!-- Database Configuration -->
 	<import resource="hibernate.xml"/>
+	
+	
+	<bean id="gsonBuilder" class="com.google.gson.GsonBuilder"/>
+    
+    <bean id="bytesDeserializer" class="com.jcrud.utils.json.DataTypeJsonDeserializer">
+		<constructor-arg type="java.lang.Class" value="byte[]"/>
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="plain">
+					<bean class="com.jcrud.utils.json.deserializers.StringJsonDeserializer"/>
+				</entry>
+				<entry key="base64">
+					<bean class="com.jcrud.utils.json.deserializers.Base64JsonDeserializer"/>
+				</entry>
+			</util:map>
+		</constructor-arg>
+	</bean>
 		
+	<bean id="filterDeserializer" class="com.jcrud.utils.json.DataTypeJsonDeserializer">
+		<constructor-arg type="java.lang.Class" value="com.apimock.dao.MockRequestEvaluatorEntity"/>
+		<constructor-arg type="java.util.Map">
+			<util:map>
+				<entry key="request">
+					<bean class="com.apimock.impl.QueryHeaderEvaluatorJsonDeserializer"/>
+				</entry>
+				<entry key="spring">
+					<bean class="com.jcrud.utils.json.deserializers.SpringJsonDeserializer">
+						<constructor-arg type="java.lang.Class" value="com.apimock.model.MockRequestEvaluator" />
+					</bean>
+				</entry>
+				<entry key="composite">
+					<bean class="com.jcrud.utils.json.deserializers.ImplementationJsonDeserializer">
+						<constructor-arg index="0" value="com.apimock.dao.MockRequestEvaluatorEntity"/>
+						<constructor-arg index="1" value="com.apimock.dao.evaluators.CompositeEvaluatorEntity"/>
+					</bean>
+				</entry>
+			</util:map>
+		</constructor-arg>
+	</bean>
+	
+	
 	<bean id="gson" class="com.jcrud.utils.json.GsonFactoryBean">
-		<constructor-arg>
-			<bean class="com.google.gson.GsonBuilder"/>
+		<constructor-arg type="com.google.gson.GsonBuilder" ref="gsonBuilder" />
+		<constructor-arg type="java.util.List">
+			<util:list>
+		        <ref bean="bytesDeserializer"/>
+		        <ref bean="filterDeserializer"/>
+		    </util:list>
 		</constructor-arg>
 	</bean>
 
@@ -61,6 +105,7 @@
 		<constructor-arg type="java.util.Map">
 			<util:map>
 				<entry key="/persons" value-type="java.lang.Class" value="com.jcrud.impl.stub.Person"/>
+				<entry key="/_admin" value-type="java.lang.Class" value="com.apimock.dao.MockDataEntity"/>
 			</util:map>
 		</constructor-arg>
 	</bean>

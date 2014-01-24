@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.jcrud.model.HttpRequest;
 import com.jcrud.model.HttpResponse;
 
-public interface CRUDServletAdapter {
+public interface HttpServletAdapter {
 
 	HttpRequest adaptRequest(HttpServletRequest request);
 

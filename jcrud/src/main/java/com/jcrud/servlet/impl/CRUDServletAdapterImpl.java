@@ -17,9 +17,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.jcrud.model.HttpRequest;
 import com.jcrud.model.HttpResponse;
 import com.jcrud.model.impl.HttpRequestImpl;
-import com.jcrud.servlet.CRUDServletAdapter;
+import com.jcrud.servlet.HttpServletAdapter;
 
-public class CRUDServletAdapterImpl implements CRUDServletAdapter {
+public class CRUDServletAdapterImpl implements HttpServletAdapter {
 
 	@Override
 	public HttpRequest adaptRequest(HttpServletRequest request) {

@@ -1,4 +1,4 @@
-package com.jcrud.servlet;
+package com.apimock.servlet;
 
 import java.io.IOException;
 
@@ -18,21 +18,21 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
-import com.jcrud.model.CRUDDispatcher;
 import com.jcrud.model.HttpRequest;
 import com.jcrud.model.HttpResponse;
+import com.jcrud.servlet.HttpServletAdapter;
 
-public class CRUDServletContainer extends HttpServlet implements Filter {
+public class MockServletContainer extends HttpServlet implements Filter {
 
 	private static final long serialVersionUID = -1886366373810761633L;
 
-	private static final Log logger = LogFactory.getLog(CRUDServletContainer.class);
-
-	@Autowired
-	private CRUDDispatcher restDispatcher;
+	private static final Log logger = LogFactory.getLog(MockServletContainer.class);
 
 	@Autowired
 	private HttpServletAdapter crudServletAdapter;
+
+	@Autowired
+	private MockDispatcher mockDispatcher;
 
 	private FilterConfig filterConfig;
 
@@ -63,7 +63,7 @@ public class CRUDServletContainer extends HttpServlet implements Filter {
 
 		HttpRequest httpRequest = crudServletAdapter.adaptRequest(request);
 
-		HttpResponse httpResponse = restDispatcher.handleRequest(httpRequest);
+		HttpResponse httpResponse = mockDispatcher.handleRequest(httpRequest);
 
 		crudServletAdapter.adaptResponse(httpResponse, response);
 	}
