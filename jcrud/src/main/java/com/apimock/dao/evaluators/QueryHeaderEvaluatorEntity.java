@@ -93,8 +93,16 @@ public class QueryHeaderEvaluatorEntity extends MockRequestEvaluatorEntity {
 		return eval;
 	}
 
+	public Map<String, List<String>> getHeaders() {
+		return gson.fromJson(headers, headersMapType);
+	}
+
 	public void setHeaders(Map<String, List<String>> headers) {
 		this.headers = gson.toJson(headers);
+	}
+
+	public Map<String, List<String>> getQueryParams() {
+		return gson.fromJson(queryParams, headersMapType);
 	}
 
 	public void setQueryParams(Map<String, List<String>> queryParams) {

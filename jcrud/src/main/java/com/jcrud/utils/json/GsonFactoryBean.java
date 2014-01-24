@@ -11,24 +11,42 @@ public class GsonFactoryBean implements FactoryBean<Gson> {
 
 	private final GsonBuilder gs;
 
-	private final List<CustomJsonDeserializer<?>> deserializers;
+	private List<CustomJsonDeserializer<?>> deserializers;
 
-	public GsonFactoryBean(GsonBuilder gs, List<CustomJsonDeserializer<?>> deserializers) {
+	private List<CustomJsonSerializer<?>> serializers;
+
+	public GsonFactoryBean(GsonBuilder gs, List<CustomJsonDeserializer<?>> deserializers, List<CustomJsonSerializer<?>> serializers) {
 		this.gs = gs;
 		this.deserializers = deserializers;
+		this.serializers = serializers;
 	}
 
 	public GsonFactoryBean(GsonBuilder gs) {
-		this(gs, null);
+		this(gs, null, null);
+	}
+
+	public void setDeserializers(List<CustomJsonDeserializer<?>> deserializers) {
+		this.deserializers = deserializers;
+	}
+
+	public void setSerializers(List<CustomJsonSerializer<?>> serializers) {
+		this.serializers = serializers;
 	}
 
 	@Override
 	public Gson getObject() throws Exception {
 
 		if (deserializers != null) {
-			for (CustomJsonDeserializer<?> deserializer : deserializers) {
 
+			for (CustomJsonDeserializer<?> deserializer : deserializers) {
 				gs.registerTypeAdapter(deserializer.getDeserializingClass(), deserializer);
+			}
+		}
+
+		if (serializers != null) {
+
+			for (CustomJsonSerializer<?> serializer : serializers) {
+				gs.registerTypeAdapter(serializer.getSerializingClass(), serializer);
 			}
 		}
 		return gs.create();

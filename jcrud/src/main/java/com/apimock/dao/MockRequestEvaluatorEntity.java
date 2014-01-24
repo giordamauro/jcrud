@@ -24,4 +24,8 @@ public abstract class MockRequestEvaluatorEntity implements MockRequestEvaluator
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column
 	private long id;
+
+	public long getId() {
+		return id;
+	}
 }

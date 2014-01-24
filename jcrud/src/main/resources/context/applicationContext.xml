@@ -62,13 +62,21 @@
 		</constructor-arg>
 	</bean>
 	
+	<bean id="bytesJsonSerializer" class="com.jcrud.utils.json.serializers.BytesJsonSerializer"/>
+	<bean id="mockRequestEvaluatorSerlializer" class="com.apimock.impl.MockRequestEvaluatorJsonSerializer" />
 	
 	<bean id="gson" class="com.jcrud.utils.json.GsonFactoryBean">
 		<constructor-arg type="com.google.gson.GsonBuilder" ref="gsonBuilder" />
-		<constructor-arg type="java.util.List">
+		<constructor-arg type="java.util.List" index="1">
 			<util:list>
 		        <ref bean="bytesDeserializer"/>
 		        <ref bean="filterDeserializer"/>
+		    </util:list>
+		</constructor-arg>
+		<constructor-arg type="java.util.List" index="2">
+			<util:list>
+		        <ref bean="bytesJsonSerializer"/>
+		        <ref bean="mockRequestEvaluatorSerlializer"/>
 		    </util:list>
 		</constructor-arg>
 	</bean>
