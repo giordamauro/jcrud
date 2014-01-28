@@ -12,13 +12,11 @@ import javax.persistence.Table;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
-import com.apimock.model.MockRequest;
 import com.jcrud.model.HttpMethod;
-import com.jcrud.model.HttpRequest;
 
 @Entity
 @Table(name = "mockrequest")
-public class MockRequestEntity implements MockRequest {
+public class MockRequestEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -29,7 +27,7 @@ public class MockRequestEntity implements MockRequest {
 	private HttpMethod method;
 
 	@Column
-	private String path;
+	private String pathing;
 
 	@Column
 	private int priority;
@@ -39,43 +37,43 @@ public class MockRequestEntity implements MockRequest {
 	@JoinColumn(name = "evaluator_id")
 	private MockRequestEvaluatorEntity evaluator;
 
-	@Override
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
 	public HttpMethod getMethod() {
 		return method;
-	}
-
-	@Override
-	public String getPath() {
-		return path;
-	}
-
-	@Override
-	public boolean evaluate(HttpRequest request) {
-		return evaluator.evaluate(this, request);
-	}
-
-	@Override
-	public int getPriority() {
-		return priority;
 	}
 
 	public void setMethod(HttpMethod method) {
 		this.method = method;
 	}
 
+	public String getPath() {
+		return pathing;
+	}
+
 	public void setPath(String path) {
-		this.path = path;
+		this.pathing = path;
+	}
+
+	public int getPriority() {
+		return priority;
 	}
 
 	public void setPriority(int priority) {
 		this.priority = priority;
 	}
 
-	public void setEvaluator(MockRequestEvaluatorEntity evaluator) {
-		this.evaluator = evaluator;
+	public MockRequestEvaluatorEntity getEvaluator() {
+		return evaluator;
 	}
 
-	public MockRequestEvaluatorEntity getEvaluator() {
-		return this.evaluator;
+	public void setEvaluator(MockRequestEvaluatorEntity evaluator) {
+		this.evaluator = evaluator;
 	}
 }
