@@ -15,6 +15,7 @@ import com.apimock.model.impl.MockDataDto;
 import com.apimock.model.impl.MockRequestDto;
 import com.apimock.model.impl.MockResponseDto;
 import com.jcrud.model.HttpMethod;
+import com.jcrud.utils.adapter.SilentObjectCreator;
 
 public class EntityAdapterImpl implements EntityAdapter {
 

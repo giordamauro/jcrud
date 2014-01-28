@@ -3,15 +3,17 @@ package com.apimock.model.impl;
 import java.util.List;
 import java.util.Map;
 
-import com.apimock.entityadapter.model.JsonTypeAdapter;
-import com.apimock.entityadapter.model.AdapteField;
+import com.apimock.dao.MockResponseEntity;
 import com.apimock.model.MockResponse;
+import com.jcrud.utils.adapter.Adapt;
+import com.jcrud.utils.adapter.JsonAdapt;
 
+@Adapt(to = MockResponseEntity.class)
 public class MockResponseDto implements MockResponse {
 
 	private final int statusCode;
 
-	@AdapteField(withClass = JsonTypeAdapter.class)
+	@JsonAdapt
 	private final Map<String, List<String>> headers;
 
 	private final byte[] content;

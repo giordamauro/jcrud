@@ -1,4 +1,4 @@
-package com.apimock.entityadapter.model;
+package com.jcrud.utils.adapter;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -27,10 +27,23 @@ public final class SilentObjectCreator {
 
 	public static void setFinalPrivateField(Object object, String fieldName, Object value) {
 
+		Field field = null;
+
 		try {
 			Class<?> objClass = object.getClass();
 
-			Field field = objClass.getDeclaredField(fieldName);
+			field = objClass.getDeclaredField(fieldName);
+
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
+		setFinalPrivateField(object, field, value);
+	}
+
+	public static void setFinalPrivateField(Object object, Field field, Object value) {
+
+		try {
 
 			boolean isAccessible = field.isAccessible();
 
@@ -45,11 +58,21 @@ public final class SilentObjectCreator {
 
 	public static Object getFinalPrivateField(Object object, String fieldName) {
 
+		Field field = null;
 		try {
 			Class<?> objClass = object.getClass();
 
-			Field field = objClass.getDeclaredField(fieldName);
+			field = objClass.getDeclaredField(fieldName);
 
+		} catch (Exception e) {
+			throw new IllegalStateException(e);
+		}
+
+		return getFinalPrivateField(object, field);
+	}
+
+	public static Object getFinalPrivateField(Object object, Field field) {
+		try {
 			boolean isAccessible = field.isAccessible();
 
 			field.setAccessible(true);

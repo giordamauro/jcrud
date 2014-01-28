@@ -4,10 +4,6 @@ import com.google.gson.Gson;
 
 public class JsonTypeAdapter implements ValueTypeAdapter {
 
-	// private static final Type headersMapType = new TypeToken<Map<String,
-	// List<String>>>() {
-	// }.getType();
-
 	private static final Gson gson = new Gson();
 
 	@Override

@@ -1,16 +1,19 @@
 package com.apimock.model.impl;
 
-import com.apimock.entityadapter.model.AdapteField;
+import com.apimock.dao.MockRequestEntity;
 import com.apimock.model.MockRequest;
 import com.apimock.model.MockRequestEvaluator;
 import com.jcrud.model.HttpMethod;
 import com.jcrud.model.HttpRequest;
+import com.jcrud.utils.adapter.Adapt;
+import com.jcrud.utils.adapter.AdaptField;
 
+@Adapt(to = MockRequestEntity.class)
 public class MockRequestDto implements MockRequest {
 
 	private final HttpMethod method;
 
-	@AdapteField(toName = "pathing")
+	@AdaptField(toName = "pathing")
 	private final String path;
 
 	private final int priority;
