@@ -97,7 +97,7 @@
 	</bean>
 
 	<bean id="genericDao" class="com.jcrud.jpa.GenericDaoImpl" >
-   		<property name="sessionFactory" ref="sessionFactory"/>
+   		<constructor-arg ref="sessionFactory"/>
    </bean>
 
 

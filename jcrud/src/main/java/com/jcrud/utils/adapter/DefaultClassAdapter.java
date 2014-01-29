@@ -1,6 +1,7 @@
 package com.jcrud.utils.adapter;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 public class DefaultClassAdapter implements ClassAdapter {
 
@@ -19,38 +20,41 @@ public class DefaultClassAdapter implements ClassAdapter {
 
 			for (Field srcField : srcFields) {
 
-				String srcFieldName = srcField.getName();
-				Field targetField = null;
+				if (!Modifier.isStatic(srcField.getModifiers())) {
 
-				Class<? extends FieldAdapter> fieldAdapterClass = null;
+					String srcFieldName = srcField.getName();
+					Field targetField = null;
 
-				AdaptField fieldAdapterAnn = srcField.getAnnotation(AdaptField.class);
-				if (fieldAdapterAnn != null) {
+					Class<? extends FieldAdapter> fieldAdapterClass = null;
 
-					String targetFieldName = fieldAdapterAnn.toName();
-					if (!targetFieldName.equals("")) {
-						targetField = getDeclaredField(targetClass, targetFieldName);
+					AdaptField fieldAdapterAnn = srcField.getAnnotation(AdaptField.class);
+					if (fieldAdapterAnn != null) {
+
+						String targetFieldName = fieldAdapterAnn.toName();
+						if (!targetFieldName.equals("")) {
+							targetField = getDeclaredField(targetClass, targetFieldName);
+						}
+
+						fieldAdapterClass = fieldAdapterAnn.with();
 					}
 
-					fieldAdapterClass = fieldAdapterAnn.with();
+					if (targetField == null) {
+						targetField = getDeclaredField(targetClass, srcFieldName);
+					}
+
+					if (fieldAdapterClass == null && srcField.getAnnotation(JsonAdapt.class) != null) {
+						fieldAdapterClass = JsonFieldAdapter.class;
+					}
+
+					FieldAdapter fieldAdapter = defaultFieldAdapter;
+
+					if (fieldAdapterClass != null) {
+						fieldAdapter = SilentObjectCreator.create(fieldAdapterClass);
+					}
+
+					Object srcFieldValue = SilentObjectCreator.getFinalPrivateField(srcObject, srcField);
+					fieldAdapter.adaptTo(srcField, srcFieldValue, targetField, targetObject);
 				}
-
-				if (targetField == null) {
-					targetField = getDeclaredField(targetClass, srcFieldName);
-				}
-
-				if (fieldAdapterClass == null && srcField.getAnnotation(JsonAdapt.class) != null) {
-					fieldAdapterClass = JsonFieldAdapter.class;
-				}
-
-				FieldAdapter fieldAdapter = defaultFieldAdapter;
-
-				if (fieldAdapterClass != null) {
-					fieldAdapter = SilentObjectCreator.create(fieldAdapterClass);
-				}
-
-				Object srcFieldValue = SilentObjectCreator.getFinalPrivateField(srcObject, srcField);
-				fieldAdapter.adaptTo(srcField, srcFieldValue, targetField, targetObject);
 			}
 		}
 		return targetObject;
@@ -70,41 +74,46 @@ public class DefaultClassAdapter implements ClassAdapter {
 
 			for (Field srcField : srcFields) {
 
-				String srcFieldName = srcField.getName();
-				Field targetField = null;
+				if (!Modifier.isStatic(srcField.getModifiers())) {
 
-				Class<? extends FieldAdapter> fieldAdapterClass = null;
+					String srcFieldName = srcField.getName();
+					Field targetField = null;
 
-				AdaptField fieldAdapterAnn = srcField.getAnnotation(AdaptField.class);
-				if (fieldAdapterAnn != null) {
+					Class<? extends FieldAdapter> fieldAdapterClass = null;
 
-					String targetFieldName = fieldAdapterAnn.toName();
-					if (!targetFieldName.equals("")) {
-						targetField = getDeclaredField(targetClass, targetFieldName);
+					AdaptField fieldAdapterAnn = srcField.getAnnotation(AdaptField.class);
+					if (fieldAdapterAnn != null) {
+
+						String targetFieldName = fieldAdapterAnn.toName();
+						if (!targetFieldName.equals("")) {
+							targetField = getDeclaredField(targetClass, targetFieldName);
+						}
+
+						fieldAdapterClass = fieldAdapterAnn.with();
 					}
+
+					if (targetField == null) {
+						targetField = getDeclaredField(targetClass, srcFieldName);
+					}
+
+					if (targetField == null) {
+						targetField = getDeclaredField(targetClass, srcFieldName);
+					}
+
+					if (fieldAdapterClass == null && srcField.getAnnotation(JsonAdapt.class) != null) {
+						fieldAdapterClass = JsonFieldAdapter.class;
+					}
+
+					FieldAdapter fieldAdapter = defaultFieldAdapter;
+
+					if (fieldAdapterClass != null) {
+						fieldAdapter = SilentObjectCreator.create(fieldAdapterClass);
+					}
+
+					Object targetFieldValue = SilentObjectCreator.getFinalPrivateField(targetObject, targetField);
+
+					fieldAdapter.adaptFrom(targetField, targetFieldValue, targetObject, srcField, srcObject);
 				}
-
-				if (targetField == null) {
-					targetField = getDeclaredField(targetClass, srcFieldName);
-				}
-
-				if (targetField == null) {
-					targetField = getDeclaredField(targetClass, srcFieldName);
-				}
-
-				if (fieldAdapterClass == null && srcField.getAnnotation(JsonAdapt.class) != null) {
-					fieldAdapterClass = JsonFieldAdapter.class;
-				}
-
-				if (fieldAdapterClass == null) {
-					fieldAdapterClass = DefaultFieldAdapter.class;
-				}
-
-				FieldAdapter fieldAdapter = SilentObjectCreator.create(fieldAdapterClass);
-
-				Object targetFieldValue = SilentObjectCreator.getFinalPrivateField(targetObject, targetField);
-
-				fieldAdapter.adaptFrom(targetField, targetFieldValue, srcField, srcObject);
 			}
 		}
 		return srcObject;

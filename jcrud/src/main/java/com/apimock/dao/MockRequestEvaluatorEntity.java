@@ -11,12 +11,10 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
-import com.apimock.model.MockRequestEvaluator;
-
 @Entity
 @Table(name = "mockrequestevaluator")
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class MockRequestEvaluatorEntity implements MockRequestEvaluator, Serializable {
+public abstract class MockRequestEvaluatorEntity implements Serializable {
 
 	private static final long serialVersionUID = 1392494375037690020L;
 
@@ -24,8 +22,4 @@ public abstract class MockRequestEvaluatorEntity implements MockRequestEvaluator
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column
 	private long id;
-
-	public long getId() {
-		return id;
-	}
 }

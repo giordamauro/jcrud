@@ -27,7 +27,7 @@ public class MockRequestEntity {
 	private HttpMethod method;
 
 	@Column
-	private String pathing;
+	private String path;
 
 	@Column
 	private int priority;
@@ -54,11 +54,11 @@ public class MockRequestEntity {
 	}
 
 	public String getPath() {
-		return pathing;
+		return path;
 	}
 
 	public void setPath(String path) {
-		this.pathing = path;
+		this.path = path;
 	}
 
 	public int getPriority() {

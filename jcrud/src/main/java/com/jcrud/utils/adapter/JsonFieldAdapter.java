@@ -20,7 +20,7 @@ public class JsonFieldAdapter implements FieldAdapter {
 	}
 
 	@Override
-	public void adaptFrom(Field targetField, Object targetFieldValue, Field srcField, Object srcObject) {
+	public void adaptFrom(Field targetField, Object targetFieldValue, Object targetObject, Field srcField, Object srcObject) {
 
 		Class<?> srcFieldClass = srcField.getType();
 		Class<?> targetFieldClass = targetFieldValue.getClass();

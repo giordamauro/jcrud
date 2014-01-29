@@ -12,7 +12,5 @@ public @interface AdaptField {
 
 	String toName() default "";
 
-	Class<?> as() default AdaptField.class;
-
 	Class<? extends FieldAdapter> with() default DefaultFieldAdapter.class;
 }

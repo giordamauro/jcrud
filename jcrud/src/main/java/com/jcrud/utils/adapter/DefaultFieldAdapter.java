@@ -25,7 +25,7 @@ public class DefaultFieldAdapter implements FieldAdapter {
 	}
 
 	@Override
-	public void adaptFrom(Field targetField, Object targetFieldValue, Field srcField, Object srcObject) {
+	public void adaptFrom(Field targetField, Object targetFieldValue, Object targetObject, Field srcField, Object srcObject) {
 
 		if (targetFieldValue != null) {
 
@@ -38,22 +38,7 @@ public class DefaultFieldAdapter implements FieldAdapter {
 				srcValue = targetFieldValue;
 			} else {
 
-				Class<?> asFieldClass = srcFieldClass;
-
-				AdaptField fieldAdapterAnn = srcField.getAnnotation(AdaptField.class);
-				if (fieldAdapterAnn != null) {
-
-					if (!fieldAdapterAnn.as().equals(AdaptField.class)) {
-						asFieldClass = fieldAdapterAnn.as();
-					}
-				}
-
-				if (srcFieldClass.isInterface() && asFieldClass.equals(srcFieldClass)) {
-					throw new IllegalStateException(String.format("Field '%s' of class '%s' is an interface - Needs to be annotated with @AdaptField(as = \"<class>\"", srcField.getName(),
-							srcObject.getClass()));
-				}
-
-				srcValue = AdaptUtil.fromTarget(targetFieldValue, asFieldClass);
+				srcValue = AdaptUtil.fromTarget(targetFieldValue, srcFieldClass);
 			}
 
 			SilentObjectCreator.setFinalPrivateField(srcObject, srcField, srcValue);

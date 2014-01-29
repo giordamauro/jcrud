@@ -6,5 +6,5 @@ public interface FieldAdapter {
 
 	void adaptTo(Field srcField, Object srcFieldValue, Field targetField, Object targetObject);
 
-	void adaptFrom(Field targetField, Object targetFieldValue, Field srcField, Object srcObject);
+	void adaptFrom(Field targetField, Object targetFieldValue, Object targetObject, Field srcField, Object srcObject);
 }
