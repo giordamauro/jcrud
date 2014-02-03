@@ -27,7 +27,7 @@ public final class QueryUtil {
 	}
 
 	public static QueryOperation getQueryOperation(String querySql) {
-
+		
 		QueryOperation queryOp = new QueryParser(querySql).getQueryOperation();
 		return queryOp;
 	}

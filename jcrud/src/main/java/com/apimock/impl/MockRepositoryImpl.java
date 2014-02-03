@@ -9,7 +9,9 @@ import org.hibernate.criterion.Restrictions;
 import com.apimock.dao.MockDataEntity;
 import com.apimock.model.MockData;
 import com.apimock.model.MockRepository;
+import com.apimock.model.impl.MockDataDto;
 import com.jcrud.jpa.GenericDao;
+import com.jcrud.jpa.hibernate.HibernateCriteria;
 import com.jcrud.model.HttpMethod;
 
 public class MockRepositoryImpl implements MockRepository {
@@ -25,15 +27,20 @@ public class MockRepositoryImpl implements MockRepository {
 	@Override
 	public List<MockData> getMocksData(HttpMethod method, String path) {
 
-		DetachedCriteria criteria = DetachedCriteria.forClass(MockDataEntity.class);
-		DetachedCriteria criteria2 = criteria.createCriteria("request");
+		DetachedCriteria detachedCriteria = DetachedCriteria.forClass(MockDataEntity.class);
+		DetachedCriteria criteria2 = detachedCriteria.createCriteria("request");
 		criteria2.add(Restrictions.eq("method", method));
 		criteria2.add(Restrictions.like("path", path));
 		criteria2.addOrder(Order.desc("priority"));
 
-		List<MockData> elements = genericDao.getElements(criteria, 0, DEFAULT_LIMIT);
+		HibernateCriteria<MockDataDto> criteria = new HibernateCriteria<MockDataDto>(detachedCriteria, MockDataDto.class);
+		
+		List<? extends MockData> elements = genericDao.getElements(criteria, 0, DEFAULT_LIMIT);
 
-		return elements;
+		@SuppressWarnings("unchecked")
+		List<MockData> mockDataElements = (List<MockData>) elements;
+		
+		return mockDataElements;
 	}
 
 }

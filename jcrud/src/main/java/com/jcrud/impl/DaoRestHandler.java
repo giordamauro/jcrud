@@ -5,15 +5,14 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.criterion.Criterion;
-import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Order;
 
+import com.jcrud.jpa.DaoCriteria;
 import com.jcrud.jpa.GenericDao;
+import com.jcrud.jpa.query.RestQueryCriteria;
 import com.jcrud.model.HttpRequest;
 import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
-import com.jcrud.utils.query.QueryUtil;
 
 public class DaoRestHandler implements RestHandler {
 
@@ -75,21 +74,13 @@ public class DaoRestHandler implements RestHandler {
 			pageNumber = DEFAULT_PAGE_NUMBER;
 		}
 
-		DetachedCriteria criteria = DetachedCriteria.forClass(resourceClass);
-
 		String query = getQueryFilter(request);
-		if (query != null) {
-			Criterion criterion = QueryUtil.getCriterionForQuery(query, resourceClass);
-			criteria.add(criterion);
-		}
-
+		
 		List<Order> orders = getOrders(request);
-		for (Order order : orders) {
-			criteria.addOrder(order);
-		}
-
 		int offset = elementsCount * pageNumber;
-		List<T> elements = genericDao.getElements(criteria, offset, elementsCount);
+		
+		DaoCriteria<T> daoCriteria = new RestQueryCriteria<T>(query, resourceClass, orders);
+		List<T> elements = genericDao.getElements(daoCriteria, offset, elementsCount);
 
 		return elements;
 	}

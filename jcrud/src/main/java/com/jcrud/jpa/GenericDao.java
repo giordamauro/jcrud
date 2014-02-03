@@ -2,8 +2,6 @@ package com.jcrud.jpa;
 
 import java.util.List;
 
-import org.hibernate.criterion.DetachedCriteria;
-
 public interface GenericDao {
 
 	long save(Object object);
@@ -18,5 +16,5 @@ public interface GenericDao {
 
 	<T> List<T> getElements(Class<T> daoClass, int offset, int limit);
 
-	<T> List<T> getElements(DetachedCriteria criteria, int offset, int limit);
+	<T> List<T> getElements(DaoCriteria<T> criteria, int offset, int limit);
 }

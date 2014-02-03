@@ -41,7 +41,7 @@
 	</bean>
 		
 	<bean id="filterDeserializer" class="com.jcrud.utils.json.DataTypeJsonDeserializer">
-		<constructor-arg type="java.lang.Class" value="com.apimock.dao.MockRequestEvaluatorEntity"/>
+		<constructor-arg type="java.lang.Class" value="com.apimock.model.MockRequestEvaluator"/>
 		<constructor-arg type="java.util.Map">
 			<util:map>
 				<entry key="request">
@@ -54,16 +54,26 @@
 				</entry>
 				<entry key="composite">
 					<bean class="com.jcrud.utils.json.deserializers.ImplementationJsonDeserializer">
-						<constructor-arg index="0" value="com.apimock.dao.MockRequestEvaluatorEntity"/>
-						<constructor-arg index="1" value="com.apimock.dao.evaluators.CompositeEvaluatorEntity"/>
+						<constructor-arg index="0" value="com.apimock.model.MockRequestEvaluator"/>
+						<constructor-arg index="1" value="com.apimock.model.impl.CompositeEvaluator"/>
 					</bean>
 				</entry>
 			</util:map>
 		</constructor-arg>
 	</bean>
 	
+	<bean id="mockRequestDeserializer" class="com.jcrud.utils.json.deserializers.ImplementationJsonDeserializer">
+		<constructor-arg index="0" value="com.apimock.model.MockRequest"/>
+		<constructor-arg index="1" value="com.apimock.model.impl.MockRequestDto"/>
+	</bean>
+	
+	<bean id="mockResponseDeserializer" class="com.jcrud.utils.json.deserializers.ImplementationJsonDeserializer">
+		<constructor-arg index="0" value="com.apimock.model.MockResponse"/>
+		<constructor-arg index="1" value="com.apimock.model.impl.MockResponseDto"/>
+	</bean>
+	
+	
 	<bean id="bytesJsonSerializer" class="com.jcrud.utils.json.serializers.BytesJsonSerializer"/>
-	<bean id="mockRequestEvaluatorSerlializer" class="com.apimock.impl.MockRequestEvaluatorJsonSerializer" />
 	
 	<bean id="gson" class="com.jcrud.utils.json.GsonFactoryBean">
 		<constructor-arg type="com.google.gson.GsonBuilder" ref="gsonBuilder" />
@@ -71,12 +81,13 @@
 			<util:list>
 		        <ref bean="bytesDeserializer"/>
 		        <ref bean="filterDeserializer"/>
+				<ref bean="mockRequestDeserializer"/>
+				<ref bean="mockResponseDeserializer"/>
 		    </util:list>
 		</constructor-arg>
 		<constructor-arg type="java.util.List" index="2">
 			<util:list>
 		        <ref bean="bytesJsonSerializer"/>
-		        <ref bean="mockRequestEvaluatorSerlializer"/>
 		    </util:list>
 		</constructor-arg>
 	</bean>
@@ -96,8 +107,12 @@
 		</constructor-arg>
 	</bean>
 
-	<bean id="genericDao" class="com.jcrud.jpa.GenericDaoImpl" >
+	<bean id="genericDao" class="com.jcrud.jpa.hibernate.HibernateGenericDao" >
    		<constructor-arg ref="sessionFactory"/>
+   </bean>
+   
+   <bean id="adapterDao" class="com.jcrud.utils.adapter.dao.GenericAdapterDao">
+   		<constructor-arg ref="genericDao"/>
    </bean>
 
 
@@ -106,7 +121,7 @@
 			<bean class="com.apimock.impl.MockRepositoryConsumerImpl">
 				<constructor-arg>
 					<bean class="com.apimock.impl.MockRepositoryImpl">
-						<constructor-arg ref="genericDao"/>
+						<constructor-arg ref="adapterDao"/>
 					</bean>
 				</constructor-arg>
 			</bean>
@@ -114,7 +129,7 @@
 	</bean>
 
 	<bean id="defaultRestHandler" class="com.jcrud.impl.DaoRestHandler" >
-   		<constructor-arg type="com.jcrud.jpa.GenericDao" ref="genericDao"/>
+   		<constructor-arg type="com.jcrud.jpa.GenericDao" ref="adapterDao"/>
    </bean>
    
 	<bean id="restHandlerFactory" class="com.jcrud.impl.BasicRestHandlerFactory">
@@ -126,7 +141,8 @@
 		<constructor-arg type="java.util.Map">
 			<util:map>
 				<entry key="/persons" value-type="java.lang.Class" value="com.jcrud.impl.stub.Person"/>
-				<entry key="/_admin" value-type="java.lang.Class" value="com.apimock.dao.MockDataEntity"/>
+				<entry key="/_admin" value-type="java.lang.Class" value="com.apimock.model.impl.MockDataDto"/>
+				<entry key="/_old-admin" value-type="java.lang.Class" value="com.apimock.dao.MockDataEntity"/>
 			</util:map>
 		</constructor-arg>
 	</bean>
