@@ -13,6 +13,8 @@ import com.jcrud.jpa.query.RestQueryCriteria;
 import com.jcrud.model.HttpRequest;
 import com.jcrud.model.RestHandler;
 import com.jcrud.model.exceptions.CRUDResourceNotExistent;
+import com.jcrud.utils.UuidGeneratorUtil;
+import com.jcrud.utils.adapter.SilentObjectCreator;
 
 public class DaoRestHandler implements RestHandler {
 
@@ -28,8 +30,11 @@ public class DaoRestHandler implements RestHandler {
 	@Override
 	public <T> T handlePOST(T newObject) {
 
+		generateUuidIfPresent(newObject);
+
 		@SuppressWarnings("unchecked")
 		Class<T> resourceClass = (Class<T>) newObject.getClass();
+
 		long id = genericDao.save(newObject);
 		T object = genericDao.getById(resourceClass, id);
 
@@ -75,10 +80,10 @@ public class DaoRestHandler implements RestHandler {
 		}
 
 		String query = getQueryFilter(request);
-		
+
 		List<Order> orders = getOrders(request);
 		int offset = elementsCount * pageNumber;
-		
+
 		DaoCriteria<T> daoCriteria = new RestQueryCriteria<T>(query, resourceClass, orders);
 		List<T> elements = genericDao.getElements(daoCriteria, offset, elementsCount);
 
@@ -147,5 +152,20 @@ public class DaoRestHandler implements RestHandler {
 		}
 
 		return intValue;
+	}
+
+	private void generateUuidIfPresent(Object resourceObject) {
+
+		Class<?> resourceClass = resourceObject.getClass();
+
+		try {
+			resourceClass.getDeclaredField("uuid");
+
+			String uuid = UuidGeneratorUtil.getUUID(resourceClass);
+			SilentObjectCreator.setFinalPrivateField(resourceObject, "uuid", uuid);
+			
+		} catch (Exception e) {
+			//do nothing -> there is no way to check if a field exists
+		}
 	}
 }

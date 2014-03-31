@@ -19,6 +19,7 @@ import com.apimock.model.impl.MockResponseDto;
 import com.apimock.model.impl.QueryHeaderEvaluator;
 import com.apimock.model.impl.SerializedEvaluator;
 import com.jcrud.model.HttpMethod;
+import com.jcrud.utils.UuidGeneratorUtil;
 
 public final class AdaptUtil {
 
@@ -139,7 +140,7 @@ public final class AdaptUtil {
 
 		MockResponseDto response = new MockResponseDto(395, headers, null);
 
-		MockDataDto mockDataDto = new MockDataDto(23L, request, response);
+		MockDataDto mockDataDto = new MockDataDto(UuidGeneratorUtil.getUUID(MockData.class), request, response);
 
 		MockDataEntity entity = AdaptUtil.fromSource(mockDataDto);
 

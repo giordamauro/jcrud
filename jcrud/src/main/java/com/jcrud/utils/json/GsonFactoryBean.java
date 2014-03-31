@@ -19,6 +19,8 @@ public class GsonFactoryBean implements FactoryBean<Gson> {
 		this.gs = gs;
 		this.deserializers = deserializers;
 		this.serializers = serializers;
+	
+		gs.serializeNulls();
 	}
 
 	public GsonFactoryBean(GsonBuilder gs) {

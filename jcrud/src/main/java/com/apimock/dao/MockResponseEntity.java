@@ -16,13 +16,13 @@ public class MockResponseEntity {
 	@Column
 	private long id;
 
-	@Column
+	@Column(nullable = false)
 	private int statusCode;
 
-	@Column
+	@Column(nullable = false)
 	private String headers;
 
-	@Column
+	@Column(nullable = false)
 	private byte[] content;
 
 	public long getId() {

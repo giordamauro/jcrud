@@ -2,7 +2,7 @@ package com.apimock.model;
 
 public interface MockData {
 
-	long getId();
+	String getUuid();
 
 	MockRequest getRequest();
 

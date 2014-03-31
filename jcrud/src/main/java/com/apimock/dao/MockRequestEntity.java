@@ -23,13 +23,13 @@ public class MockRequestEntity {
 	@Column
 	private long id;
 
-	@Column
+	@Column(nullable = false)
 	private HttpMethod method;
 
-	@Column
+	@Column(nullable = false)
 	private String path;
 
-	@Column
+	@Column(nullable = false)
 	private int priority;
 
 	@ManyToOne

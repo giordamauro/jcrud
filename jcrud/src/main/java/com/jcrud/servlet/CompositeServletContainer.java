@@ -71,9 +71,5 @@ public class CompositeServletContainer extends HttpServlet {
 			servlet.service(request, statusResponse);
 			i++;
 		}
-
-		if (statusResponse.getStatus() >= 400) {
-			statusResponse.doSendError();
-		}
 	}
 }

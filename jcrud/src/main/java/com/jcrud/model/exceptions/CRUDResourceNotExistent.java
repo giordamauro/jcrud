@@ -1,6 +1,6 @@
 package com.jcrud.model.exceptions;
 
-public class CRUDResourceNotExistent extends Exception implements HttpResponseException {
+public class CRUDResourceNotExistent extends HttpResponseException {
 
 	private static final long serialVersionUID = 5401677163340425070L;
 

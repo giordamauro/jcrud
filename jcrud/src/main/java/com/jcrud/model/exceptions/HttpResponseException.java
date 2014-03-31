@@ -1,10 +1,12 @@
 package com.jcrud.model.exceptions;
 
-public interface HttpResponseException {
+public abstract class HttpResponseException extends Throwable{
 
-	int getStatusCode();
+	private static final long serialVersionUID = -8346575501861644000L;
 
-	String getMessage();
+	public abstract int getStatusCode();
 
-	String getContentType();
+	public abstract String getMessage();
+
+	public abstract String getContentType();
 }

@@ -74,6 +74,7 @@
 	
 	
 	<bean id="bytesJsonSerializer" class="com.jcrud.utils.json.serializers.BytesJsonSerializer"/>
+	<bean id="evaluatorJsonSerlializer" class="com.apimock.impl.MockRequestEvaluatorSerializer"/>
 	
 	<bean id="gson" class="com.jcrud.utils.json.GsonFactoryBean">
 		<constructor-arg type="com.google.gson.GsonBuilder" ref="gsonBuilder" />
@@ -88,6 +89,7 @@
 		<constructor-arg type="java.util.List" index="2">
 			<util:list>
 		        <ref bean="bytesJsonSerializer"/>
+		        <ref bean="evaluatorJsonSerlializer"/>
 		    </util:list>
 		</constructor-arg>
 	</bean>
@@ -136,6 +138,7 @@
 		<constructor-arg type="com.jcrud.model.RestHandler" ref="defaultRestHandler"/>
 	</bean>
 	
+	<bean id="dtoValidator" class="com.jcrud.impl.DtoValidatorImpl"/>
 	
 	<bean id="crudDispatcher" class="com.jcrud.impl.CRUDDispatcherImpl">
 		<constructor-arg type="java.util.Map">

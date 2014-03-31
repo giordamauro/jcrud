@@ -9,27 +9,21 @@ import com.jcrud.utils.adapter.Adapt;
 @Adapt(to = MockDataEntity.class)
 public class MockDataDto implements MockData {
 
-	private final long id;
+	private final String uuid;
 
 	private final MockRequest request;
 
 	private final MockResponse response;
 
-	public MockDataDto(long id, MockRequest request, MockResponse response) {
-		this.id = id;
-		this.request = request;
-		this.response = response;
-	}
-
-	public MockDataDto(MockRequest request, MockResponse response) {
-		this.id = 0L;
+	public MockDataDto(String uuid, MockRequest request, MockResponse response) {
+		this.uuid = uuid;
 		this.request = request;
 		this.response = response;
 	}
 
 	@Override
-	public long getId() {
-		return id;
+	public String getUuid() {
+		return uuid;
 	}
 
 	@Override

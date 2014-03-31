@@ -47,7 +47,7 @@ public class MockRepositoryConsumerImpl implements MockRepositoryConsumer {
 					priority = requestPriority;
 					responseMockData = mockData;
 				} else if (requestPriority == priority) {
-					throw new MockServiceMatcherConflict(responseMockData.getId(), mockData.getId());
+					throw new MockServiceMatcherConflict(responseMockData.getUuid(), mockData.getUuid());
 				}
 			}
 		}

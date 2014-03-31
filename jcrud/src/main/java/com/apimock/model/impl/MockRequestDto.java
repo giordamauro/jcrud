@@ -42,6 +42,12 @@ public class MockRequestDto implements MockRequest {
 
 	@Override
 	public boolean evaluate(HttpRequest request) {
-		return evaluator.evaluate(this, request);
+		
+		boolean evaluation = true;
+		if(evaluator != null){
+			evaluation = evaluator.evaluate(this, request);
+		}
+		
+		return evaluation;
 	}
 }

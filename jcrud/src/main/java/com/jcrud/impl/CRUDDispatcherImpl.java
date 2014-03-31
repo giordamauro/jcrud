@@ -7,12 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.jcrud.model.CRUDDispatcher;
+import com.jcrud.model.DtoValidator;
 import com.jcrud.model.HttpMethod;
 import com.jcrud.model.HttpRequest;
 import com.jcrud.model.HttpResponse;
 import com.jcrud.model.HttpTypeAdapter;
 import com.jcrud.model.RestHandler;
-import com.jcrud.model.exceptions.CRUDResourceNotExistent;
+import com.jcrud.model.exceptions.HttpResponseException;
 
 public class CRUDDispatcherImpl implements CRUDDispatcher {
 
@@ -24,6 +25,9 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 	@Autowired
 	@Qualifier("rootTypeAdapter")
 	private HttpTypeAdapter httpTypeAdapter;
+	
+	@Autowired
+	private DtoValidator dtoValidator;
 
 	public CRUDDispatcherImpl(Map<String, Class<?>> pathAssignments) {
 		this.pathAssignments = pathAssignments;
@@ -72,16 +76,22 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 		HttpResponse response = null;
 
 		HttpMethod method = request.getMethod();
-		if (method == HttpMethod.POST) {
-
-			T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
-			T responseObject = restHandler.handlePOST(contentObject);
-
-			response = httpTypeAdapter.toHttpResponse(request, responseObject);
-		} else if (method == HttpMethod.GET) {
-
-			List<T> elements = restHandler.handleGET(request, resourceClass);
-			response = httpTypeAdapter.toHttpResponse(request, elements);
+		try {
+			if (method == HttpMethod.POST) {
+	
+				T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
+				dtoValidator.validate(contentObject);
+				
+				T responseObject = restHandler.handlePOST(contentObject);
+	
+				response = httpTypeAdapter.toHttpResponse(request, responseObject);
+			} else if (method == HttpMethod.GET) {
+	
+				List<T> elements = restHandler.handleGET(request, resourceClass);
+				response = httpTypeAdapter.toHttpResponse(request, elements);
+			}
+		} catch (HttpResponseException e) {
+			response = ExceptionResponse.fromException(e);
 		}
 
 		if (response == null) {
@@ -107,6 +117,8 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 			} else if (method == HttpMethod.PUT) {
 
 				T contentObject = httpTypeAdapter.getFromRequest(request, resourceClass);
+				dtoValidator.validate(contentObject);
+				
 				T responseObject = restHandler.handlePUT(id, contentObject);
 
 				response = httpTypeAdapter.toHttpResponse(request, responseObject);
@@ -117,7 +129,7 @@ public class CRUDDispatcherImpl implements CRUDDispatcher {
 				response = httpTypeAdapter.toHttpResponse(request, element);
 			}
 
-		} catch (CRUDResourceNotExistent e) {
+		} catch (HttpResponseException e) {
 			response = ExceptionResponse.fromException(e);
 		}
 		if (response == null) {

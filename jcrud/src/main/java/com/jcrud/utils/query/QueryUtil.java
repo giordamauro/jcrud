@@ -27,7 +27,7 @@ public final class QueryUtil {
 	}
 
 	public static QueryOperation getQueryOperation(String querySql) {
-		
+
 		QueryOperation queryOp = new QueryParser(querySql).getQueryOperation();
 		return queryOp;
 	}
@@ -129,16 +129,33 @@ public final class QueryUtil {
 
 	private static Object getCastedToFieldType(Class<?> resourceClass, String field, String value) {
 
+		Field resourceField = null;
+		Class<?> fieldType = null;
 		try {
-			Field resourceField = resourceClass.getDeclaredField(field);
-			Class<?> fieldType = resourceField.getType();
+			resourceField = resourceClass.getDeclaredField(field);
+			fieldType = resourceField.getType();
+		} catch (Exception e) {
+			throw new IllegalArgumentException(String.format("Wrong field name '%s' for class '%s'", field, resourceClass), e);
+		}
+
+		try {
 
 			Object fieldValue = null;
-			// TODO: completar otros tipos
+
 			if (fieldType.equals(Long.class) || fieldType.equals(long.class)) {
 				fieldValue = Long.valueOf(value);
 			} else if (fieldType.equals(Integer.class) || fieldType.equals(int.class)) {
 				fieldValue = Integer.valueOf(value);
+			} else if (fieldType.equals(Boolean.class) || fieldType.equals(boolean.class)) {
+				fieldValue = Boolean.valueOf(value);
+			} else if (fieldType.equals(Byte.class) || fieldType.equals(byte.class)) {
+				fieldValue = Byte.valueOf(value);
+			} else if (fieldType.equals(Short.class) || fieldType.equals(short.class)) {
+				fieldValue = Short.valueOf(value);
+			} else if (fieldType.equals(Float.class) || fieldType.equals(float.class)) {
+				fieldValue = Float.valueOf(value);
+			} else if (fieldType.equals(Double.class) || fieldType.equals(double.class)) {
+				fieldValue = Double.valueOf(value);
 			} else {
 				fieldValue = value;
 			}
@@ -146,7 +163,7 @@ public final class QueryUtil {
 			return fieldValue;
 
 		} catch (Exception e) {
-			throw new IllegalStateException(e);
+			throw new IllegalStateException(String.format("Cannot cast property value '%s' to '%s' for class field '%s' in '%s'", value, fieldType, field, resourceClass), e);
 		}
 	}
 }
